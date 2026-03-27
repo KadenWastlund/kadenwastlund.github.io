@@ -1,10 +1,364 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kaden Wastlund</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaden Wastlund | Portfolio</title>
+  <meta name="description" content="Portfolio for Kaden Wastlund featuring mobile application experience, internships, and education." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --surface: rgba(255, 255, 255, 0.74);
+      --surface-strong: #ffffff;
+      --ink: #1a1b1f;
+      --muted: #4c4f58;
+      --accent: #0f6d7d;
+      --accent-alt: #db5a2f;
+      --border: rgba(17, 17, 17, 0.12);
+      --shadow: 0 16px 36px rgba(13, 15, 20, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(219, 90, 47, 0.22), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(15, 109, 125, 0.2), transparent 35%),
+        radial-gradient(circle at 20% 90%, rgba(15, 109, 125, 0.1), transparent 25%),
+        var(--bg);
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 2rem 1.1rem 3rem;
+      display: grid;
+      gap: 1.2rem;
+    }
+
+    .hero,
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface);
+      backdrop-filter: blur(6px);
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: enter 0.65s ease forwards;
+    }
+
+    .hero {
+      background: linear-gradient(130deg, rgba(255, 255, 255, 0.91), rgba(255, 255, 255, 0.72));
+      animation-delay: 0.05s;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1;
+      margin-bottom: 0.8rem;
+    }
+
+    .lede {
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .chip {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.65rem;
+      background: var(--surface-strong);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .project-card {
+      border: 1px solid var(--border);
+      background: var(--surface-strong);
+      border-radius: 16px;
+      padding: 1rem;
+      display: grid;
+      gap: 0.65rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 18px rgba(15, 17, 20, 0.08);
+    }
+
+    .project-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.65rem;
+    }
+
+    .project-head h3 {
+      font-size: 1.05rem;
+    }
+
+    .project-date {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .project-copy,
+    .timeline-item p,
+    .notes li {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.73rem;
+      border-radius: 0.55rem;
+      padding: 0.22rem 0.45rem;
+      background: #e8f4f6;
+      border: 1px solid rgba(15, 109, 125, 0.22);
+      color: #145867;
+    }
+
+    .tag.alt {
+      background: #fbece7;
+      border-color: rgba(219, 90, 47, 0.24);
+      color: #8d3f22;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .timeline-item {
+      padding: 0.85rem;
+      border-left: 3px solid var(--accent);
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 0.55rem;
+    }
+
+    .timeline-item h3 {
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+
+    .button {
+      border-radius: 12px;
+      padding: 0.55rem 0.9rem;
+      border: 1px solid var(--border);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.8rem;
+      background: var(--surface-strong);
+      transition: transform 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button.primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .notes {
+      list-style: none;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+      padding-top: 0.25rem;
+    }
+
+    .panel:nth-of-type(1) { animation-delay: 0.15s; }
+    .panel:nth-of-type(2) { animation-delay: 0.25s; }
+    .panel:nth-of-type(3) { animation-delay: 0.35s; }
+    .panel:nth-of-type(4) { animation-delay: 0.45s; }
+
+    @keyframes enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 1rem 0.8rem 2rem;
+      }
+
+      .hero,
+      .panel {
+        border-radius: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Kaden Wastlund</h1>
-  <p>Developer site coming soon.</p>
+  <main class="page">
+    <section class="hero">
+      <span class="hero-kicker">Portfolio</span>
+      <h1>Kaden Wastlund</h1>
+      <p class="lede">
+        Mobile Application Developer with iOS-focused experience across internship and full-time roles. Current work emphasizes practical mobile engineering, app design, and team delivery in production environments.
+      </p>
+      <div class="meta">
+        <span class="chip">St George, Utah, United States</span>
+        <span class="chip">Mobile Application Developer</span>
+        <span class="chip">25 connections (snapshot)</span>
+        <span class="chip">He/Him</span>
+      </div>
+      <div class="cta">
+        <a class="button primary" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View LinkedIn</a>
+        <a class="button" href="https://github.com/KadenWastlund" target="_blank" rel="noreferrer">View GitHub</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Focus Areas</h2>
+      <ul class="notes">
+        <li>iOS development with Swift, Xcode, and mobile-first UX decisions.</li>
+        <li>Application architecture patterns, including MVC in real project work.</li>
+        <li>Practical mobile engineering across internship and full-time teams.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Professional Experience</h2>
+      <div class="grid">
+        <article class="project-card">
+          <div class="project-head">
+            <h3>Mobile Application Developer</h3>
+            <span class="project-date">Aug 2025 - Present</span>
+          </div>
+          <p class="project-copy">ExpiTrans, Inc (Full-time, On-site, United States). Current role focused on production mobile app development and iOS design execution.</p>
+          <div class="tags">
+            <span class="tag">ExpiTrans, Inc</span>
+            <span class="tag alt">iOS</span>
+          </div>
+          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-head">
+            <h3>Engineering Intern</h3>
+            <span class="project-date">Aug 2024 - May 2025</span>
+          </div>
+          <p class="project-copy">Fishbowl (Internship, Remote). Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
+          <div class="tags">
+            <span class="tag">Fishbowl</span>
+            <span class="tag alt">Remote</span>
+          </div>
+          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-head">
+            <h3>Dixie Technical College</h3>
+            <span class="project-date">Feb 2023 - Jun 2024</span>
+          </div>
+          <p class="project-copy">Mobile App Development program covering applied mobile fundamentals, API usage, and hands-on app implementation.</p>
+          <div class="tags">
+            <span class="tag">Education</span>
+            <span class="tag alt">Mobile App Development</span>
+          </div>
+          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View education source</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Timeline Snapshot</h2>
+      <div class="timeline">
+        <article class="timeline-item">
+          <h3>2020 - 2024</h3>
+          <p>Completed High School Diploma at Southwest High School.</p>
+        </article>
+        <article class="timeline-item">
+          <h3>Feb 2023 - Jun 2024</h3>
+          <p>Studied Mobile App Development at Dixie Technical College.</p>
+        </article>
+        <article class="timeline-item">
+          <h3>Aug 2024 - May 2025</h3>
+          <p>Engineering Internship at Fishbowl (Remote, Orem, Utah).</p>
+        </article>
+        <article class="timeline-item">
+          <h3>Aug 2025 - Present</h3>
+          <p>Mobile Application Developer at ExpiTrans, Inc (On-site, United States).</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Source-grounded portfolio content maintained in <code>docs/content.md</code> from LinkedIn profile snapshot data.
+    </footer>
+  </main>
 </body>
-</html> 
+</html>
