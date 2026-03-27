@@ -207,6 +207,7 @@
     }
 
     .timeline-track {
+      --event-count: 5;
       position: relative;
       padding: 4.2rem 0.3rem 2.5rem;
     }
@@ -241,12 +242,26 @@
       z-index: 2;
     }
 
+    .timeline-axis::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 0.12rem);
+      width: 2px;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 45%, var(--border));
+      transform: translateX(-50%);
+    }
+
     .timeline-axis.start {
-      left: 0;
+      left: calc(50% / var(--event-count));
+      transform: translateX(-50%);
     }
 
     .timeline-axis.end {
-      right: 0;
+      right: calc(50% / var(--event-count));
+      transform: translateX(50%);
     }
 
     .timeline-events {
@@ -254,7 +269,7 @@
       z-index: 1;
       list-style: none;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 0.9rem;
     }
 
@@ -426,6 +441,15 @@
         left: 0;
         font-size: 0.7rem;
         padding: 0.14rem 0.4rem;
+        transform: none;
+      }
+
+      .timeline-axis::after {
+        left: calc(100% + 0.12rem);
+        top: 50%;
+        width: 0.7rem;
+        height: 2px;
+        transform: translateY(-50%);
       }
 
       .timeline-axis.start {
@@ -492,7 +516,6 @@
       <div class="meta">
         <span class="chip">St George, Utah, United States</span>
         <span class="chip">Mobile Application Developer</span>
-        <span class="chip">25 connections (snapshot)</span>
       </div>
       <div class="cta">
         <a class="button primary" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View LinkedIn</a>
@@ -517,7 +540,7 @@
             <h3>Mobile Application Developer</h3>
             <span class="project-date">Aug 2025 - Present</span>
           </div>
-          <p class="project-employer">Employer: ExpiTrans, Inc (Full-time, On-site, United States)</p>
+          <p class="project-employer">ExpiTrans, Inc (Full-time, On-site, United States)</p>
           <p class="project-copy">Current role focused on production mobile app development and iOS design execution.</p>
           <div class="tags">
             <span class="tag">iOS</span>
@@ -530,7 +553,7 @@
             <h3>Engineering Intern</h3>
             <span class="project-date">Aug 2024 - May 2025</span>
           </div>
-          <p class="project-employer">Employer: Fishbowl (Internship, Remote)</p>
+          <p class="project-employer">Fishbowl (Internship, Remote)</p>
           <p class="project-copy">Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
           <div class="tags">
             <span class="tag">iOS</span>
@@ -555,12 +578,21 @@
     </section>
 
     <section class="panel">
-      <h2 class="section-title">Timeline (2024 - Now)</h2>
+      <h2 class="section-title">Timeline (2020 - Now)</h2>
       <div class="timeline-track">
-        <span class="timeline-axis start">2024</span>
+        <span class="timeline-axis start">2020</span>
         <span class="timeline-axis end">Now</span>
         <ul class="timeline-events">
           <li class="event top event-edge-start">
+            <span class="event-marker"></span>
+            <span class="event-branch"></span>
+            <article class="event-card">
+              <h3>Started High School</h3>
+              <p class="event-time">August 2020</p>
+              <p>Southwest High School enrollment began (2020 - 2024)</p>
+            </article>
+          </li>
+          <li class="event bottom">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -569,16 +601,16 @@
               <p>Southwest High School, 2024</p>
             </article>
           </li>
-          <li class="event bottom">
+          <li class="event top">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
               <h3>Graduated College</h3>
               <p class="event-time">June 2024</p>
-              <p>Dixie Technical College, Mobile App Development (June 2024)</p>
+              <p>Dixie Technical College (June 2024)</p>
             </article>
           </li>
-          <li class="event top">
+          <li class="event bottom">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -587,7 +619,7 @@
               <p>Engineering Intern role began in August 2024</p>
             </article>
           </li>
-          <li class="event bottom event-edge-end">
+          <li class="event top event-edge-end">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">

@@ -19,4 +19,4 @@ Last updated: 2026-03-27
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
 - Timeline cards alternate above/below the center line on desktop and stack into a vertical rail on mobile (`max-width: 680px`).
-- Timeline axis labels (`2024`, `Now`) render as small badges at the track edges to avoid overlapping event cards.
+- Timeline axis labels (`2020`, `Now`) render as small badges with short pointer ticks that align to the first and last timeline markers.

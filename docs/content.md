@@ -26,8 +26,8 @@ This document defines what claims on the portfolio are currently supported by so
 - Education: Southwest High School, High School Diploma, 2020 - 2024
 - Top skills listed: Swift (Programming Language), iOS Development
 - Additional listed skills: Xcode, Git
-- Network snapshot: 25 connections
-- Timeline events rendered on site (2024 -> Now):
+- Timeline events rendered on site (2020 -> Now):
+  - Started High School (Southwest High School enrollment began)
   - Graduated High School
   - Graduated college (Dixie Technical College)
   - Started employment at Fishbowl Inventories
