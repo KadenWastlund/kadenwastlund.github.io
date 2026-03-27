@@ -170,23 +170,44 @@
 
     .timeline-track {
       position: relative;
-      padding: 4.2rem 0.3rem 2.5rem;
+      padding: 2.5rem 0;
     }
 
     .timeline-track::before {
       content: "";
       position: absolute;
-      left: 1.4rem;
-      right: 1.4rem;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 4px;
+      left: 50%;
+      top: 1.4rem;
+      bottom: 1.4rem;
+      width: 4px;
       border-radius: 999px;
+      transform: translateX(-50%);
       background: linear-gradient(
-        90deg,
+        180deg,
         color-mix(in srgb, var(--accent) 92%, transparent),
         color-mix(in srgb, var(--accent-alt) 90%, transparent)
       );
+    }
+
+    @media (min-width: 681px) {
+      .timeline-track {
+        padding: 4.2rem 0.3rem 2.5rem;
+      }
+
+      .timeline-track::before {
+        left: 1.4rem;
+        right: 1.4rem;
+        top: 50%;
+        bottom: auto;
+        height: 4px;
+        width: auto;
+        transform: translateY(-50%);
+        background: linear-gradient(
+          90deg,
+          color-mix(in srgb, var(--accent) 92%, transparent),
+          color-mix(in srgb, var(--accent-alt) 90%, transparent)
+        );
+      }
     }
 
     .timeline-axis {
@@ -478,53 +499,40 @@
       }
 
       .timeline-track {
-        padding: 0.8rem 0 1rem 2.9rem;
-      }
-
-      .timeline-track::before {
-        left: 1.2rem;
-        right: auto;
-        top: 1rem;
-        bottom: 1rem;
-        width: 4px;
-        height: auto;
-        transform: none;
-        background: linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--accent) 92%, transparent),
-          color-mix(in srgb, var(--accent-alt) 90%, transparent)
-        );
+        padding: 1.5rem 0;
       }
 
       .timeline-axis {
-        left: 0;
+        left: 50%;
+        top: 0;
         font-size: 0.7rem;
         padding: 0.14rem 0.4rem;
-        transform: none;
+        transform: translate(-50%, 0);
       }
 
       .timeline-axis::after {
-        left: calc(100% + 0.12rem);
-        top: 50%;
-        width: 0.7rem;
-        height: 2px;
-        transform: translateY(-50%);
+        left: 50%;
+        top: calc(100% + 0.12rem);
+        width: 2px;
+        height: 0.7rem;
+        transform: translateX(-50%);
       }
 
       .timeline-axis.start {
-        top: -0.05rem;
+        top: 0;
+        transform: translate(-50%, -10%);
       }
 
       .timeline-axis.end {
-        left: 0;
+        bottom: 0;
         top: auto;
-        bottom: -0.1rem;
+        transform: translate(-50%, 10%);
       }
 
       .timeline-events {
         min-height: auto;
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.9rem;
       }
 
@@ -532,67 +540,61 @@
         position: relative;
         top: auto;
         left: auto;
-        width: auto;
+        width: 100%;
         min-height: auto;
-        justify-content: flex-start;
+        display: block;
+      }
+
+      .event.top {
+        grid-column: 2;
+      }
+
+      .event.bottom {
+        grid-column: 1;
       }
 
       .event-marker {
-        left: -1.6rem;
+        left: 50%;
         top: 50%;
       }
 
       .event-branch {
-        left: -1.6rem;
+        left: 50%;
         top: 50%;
         height: 2px;
         width: 26px;
-        transform: translateY(-50%);
-      }
-
-      .event.top .event-branch,
-      .event.bottom .event-branch {
-        top: 50%;
-        height: 2px;
+        transform: translate(-50%, -50%);
       }
 
       .event-card {
         position: relative;
-        left: auto;
-        width: 100%;
-        right: auto;
-        top: auto;
-        bottom: auto;
-        transform: none;
-        max-width: none;
+        width: min(90%, 100%);
+        max-width: 320px;
+        margin: 0;
       }
 
-      .event-card:hover,
-      .event-card:focus-visible {
-        transform: translateY(-2px);
+      .event.top .event-card {
+        margin-left: auto;
+      }
+
+      .event.bottom .event-card {
+        margin-right: auto;
       }
 
       .event.top .event-card,
       .event.bottom .event-card {
-        align-self: auto;
-        margin: 0;
-        width: 100%;
-      }
-
-      .event.edge-start .event-card,
-      .event.edge-end .event-card {
-        margin: 0;
+        align-self: center;
       }
 
       .modal-backdrop {
-        padding: 0;
+        padding: 1rem;
+        place-items: center;
       }
 
       .modal {
-        width: 100%;
-        max-height: none;
-        height: 100%;
-        border-radius: 0;
+        width: min(560px, calc(100% - 2rem));
+        max-height: calc(100vh - 3rem);
+        border-radius: 18px;
       }
     }
   </style>
@@ -725,9 +727,14 @@
       const modalDate = document.getElementById("modal-date");
       const modalBody = document.getElementById("modal-body");
       const modalClose = document.getElementById("modal-close");
+      const axisEnd = timelineTrack.querySelector(".timeline-axis.end");
       if (!timelineEvents || events.length === 0) return;
 
       const timelineStart = new Date("2020-01-01T00:00:00");
+      const getTimelineEnd = () => {
+        const now = new Date();
+        return new Date(`${now.getFullYear() + 1}-01-01T00:00:00`);
+      };
       const gapPx = 18;
       const laneCardWidthPx = 238;
       const edgePaddingPx = 10;
@@ -745,11 +752,14 @@
 
       // Positions markers by elapsed time since timeline start to "now" (current date).
       const setEventPositions = () => {
-        const now = new Date();
+        const timelineEnd = getTimelineEnd();
         const startMs = timelineStart.getTime();
-        const nowMs = now.getTime();
-        const timelineSpanMs = Math.max(nowMs - startMs, 1);
+        const endMs = timelineEnd.getTime();
+        const timelineSpanMs = Math.max(endMs - startMs, 1);
         const safeBounds = getSafePositionBounds();
+        if (axisEnd) {
+          axisEnd.textContent = String(timelineEnd.getFullYear());
+        }
 
         events.forEach((event) => {
           const eventMs = new Date(`${event.dataset.date}T00:00:00`).getTime();
