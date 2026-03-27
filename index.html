@@ -155,13 +155,18 @@
 
     .project-head {
       display: flex;
-      justify-content: space-between;
       align-items: baseline;
-      gap: 0.65rem;
     }
 
     .project-head h3 {
       font-size: 1.05rem;
+    }
+
+    .project-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.65rem;
     }
 
     .project-date {
@@ -207,7 +212,6 @@
     }
 
     .timeline-track {
-      --event-count: 5;
       position: relative;
       padding: 4.2rem 0.3rem 2.5rem;
     }
@@ -255,27 +259,34 @@
     }
 
     .timeline-axis.start {
-      left: calc(50% / var(--event-count));
+      left: 1.4rem;
       transform: translateX(-50%);
     }
 
     .timeline-axis.end {
-      right: calc(50% / var(--event-count));
-      transform: translateX(50%);
+      left: calc(100% - 1.4rem);
+      transform: translateX(-50%);
     }
 
     .timeline-events {
       position: relative;
       z-index: 1;
       list-style: none;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.9rem;
+      margin: 0;
+      padding: 0;
+      min-height: 520px;
     }
 
     .event {
-      position: relative;
-      min-height: 360px;
+      --position: 0;
+      --lane-level: 0;
+      --level-offset: calc(var(--lane-level) * 78px);
+      --branch-length: calc(62px + var(--level-offset));
+      position: absolute;
+      top: 0;
+      left: calc(1.4rem + (var(--position) * (100% - 2.8rem) / 100));
+      min-height: 520px;
+      width: 0;
       display: flex;
       justify-content: center;
     }
@@ -302,13 +313,13 @@
     }
 
     .event.top .event-branch {
-      top: calc(50% - 62px);
-      height: 62px;
+      top: calc(50% - var(--branch-length));
+      height: var(--branch-length);
     }
 
     .event.bottom .event-branch {
       top: 50%;
-      height: 62px;
+      height: var(--branch-length);
     }
 
     .event-card {
@@ -343,22 +354,11 @@
     }
 
     .event.top .event-card {
-      bottom: calc(50% + 0.95rem);
+      bottom: calc(50% + 0.95rem + var(--level-offset));
     }
 
     .event.bottom .event-card {
-      top: calc(50% + 0.95rem);
-    }
-
-    .event-edge-start .event-card {
-      left: 0;
-      transform: none;
-    }
-
-    .event-edge-end .event-card {
-      left: auto;
-      right: 0;
-      transform: none;
+      top: calc(50% + 0.95rem + var(--level-offset));
     }
 
     .cta {
@@ -462,17 +462,23 @@
       }
 
       .timeline-axis.end {
+        left: 0;
         top: auto;
         bottom: -0.1rem;
-        right: auto;
       }
 
       .timeline-events {
+        min-height: auto;
+        display: grid;
         grid-template-columns: 1fr;
         gap: 0.9rem;
       }
 
       .event {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: auto;
         min-height: auto;
         justify-content: flex-start;
       }
@@ -553,9 +559,11 @@
         <article class="project-card">
           <div class="project-head">
             <h3>Mobile Application Developer</h3>
+          </div>
+          <div class="project-meta">
+            <p class="project-employer">ExpiTrans, Inc</p>
             <span class="project-date">08/25 - Present</span>
           </div>
-          <p class="project-employer">ExpiTrans, Inc</p>
           <p class="project-copy">Current role focused on production mobile app development and iOS design execution.</p>
           <div class="tags">
             <span class="tag">Occupation</span>
@@ -566,9 +574,11 @@
         <article class="project-card">
           <div class="project-head">
             <h3>Engineering Intern</h3>
+          </div>
+          <div class="project-meta">
+            <p class="project-employer">Fishbowl</p>
             <span class="project-date">08/24 - 05/25</span>
           </div>
-          <p class="project-employer">Fishbowl</p>
           <p class="project-copy">Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
           <div class="tags">
             <span class="tag">Occupation</span>
@@ -579,6 +589,9 @@
         <article class="project-card">
           <div class="project-head">
             <h3>Dixie Technical College</h3>
+          </div>
+          <div class="project-meta">
+            <p class="project-employer">Education</p>
             <span class="project-date">02/23 - 06/24</span>
           </div>
           <p class="project-copy">Mobile App Development program covering applied mobile fundamentals, API usage, and hands-on app implementation.</p>
@@ -597,7 +610,7 @@
         <span class="timeline-axis start">2020</span>
         <span class="timeline-axis end">Now</span>
         <ul class="timeline-events">
-          <li class="event top event-edge-start">
+          <li class="event top" data-date="2020-08-01">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -606,7 +619,7 @@
               <p>Southwest High School enrollment began (2020 - 2024)</p>
             </article>
           </li>
-          <li class="event bottom">
+          <li class="event bottom" data-date="2024-05-01">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -615,7 +628,7 @@
               <p>Southwest High School, 2024</p>
             </article>
           </li>
-          <li class="event top">
+          <li class="event top" data-date="2024-06-01">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -624,7 +637,7 @@
               <p>Dixie Technical College (June 2024)</p>
             </article>
           </li>
-          <li class="event bottom">
+          <li class="event bottom" data-date="2024-08-01">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -633,7 +646,7 @@
               <p>Engineering Intern role began in August 2024</p>
             </article>
           </li>
-          <li class="event top event-edge-end">
+          <li class="event top" data-date="2025-08-01">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
             <article class="event-card">
@@ -650,5 +663,78 @@
       Source-grounded portfolio content maintained in <code>docs/content.md</code> from LinkedIn profile snapshot data.
     </footer>
   </main>
+  <script>
+    (() => {
+      const timelineTrack = document.querySelector(".timeline-track");
+      if (!timelineTrack) return;
+
+      const timelineEvents = timelineTrack.querySelector(".timeline-events");
+      const events = [...timelineTrack.querySelectorAll(".event[data-date]")];
+      if (!timelineEvents || events.length === 0) return;
+
+      const timelineStart = new Date("2020-01-01T00:00:00");
+      const gapPx = 18;
+      const laneCardWidthPx = 238;
+
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      // Positions markers by elapsed time since timeline start to "now" (current date).
+      const setEventPositions = () => {
+        const now = new Date();
+        const startMs = timelineStart.getTime();
+        const nowMs = now.getTime();
+        const timelineSpanMs = Math.max(nowMs - startMs, 1);
+
+        events.forEach((event) => {
+          const eventMs = new Date(`${event.dataset.date}T00:00:00`).getTime();
+          const normalized = ((eventMs - startMs) / timelineSpanMs) * 100;
+          const position = clamp(normalized, 0, 100);
+          event.style.setProperty("--position", position.toFixed(4));
+        });
+      };
+
+      // Adds extra vertical lanes on crowded dates so cards do not overlap.
+      const assignLaneLevels = (laneEvents) => {
+        const laneRightEdges = [];
+        laneEvents
+          .sort((a, b) => a.position - b.position)
+          .forEach((event) => {
+            const centerPx = (event.position / 100) * timelineEvents.clientWidth;
+            const leftPx = centerPx - laneCardWidthPx / 2;
+
+            let laneLevel = 0;
+            while (
+              laneRightEdges[laneLevel] !== undefined &&
+              leftPx < laneRightEdges[laneLevel] + gapPx
+            ) {
+              laneLevel += 1;
+            }
+
+            laneRightEdges[laneLevel] = leftPx + laneCardWidthPx;
+            event.node.style.setProperty("--lane-level", String(laneLevel));
+          });
+      };
+
+      const updateTimelineLayout = () => {
+        const desktopMode = window.matchMedia("(max-width: 680px)").matches === false;
+        if (!desktopMode) {
+          events.forEach((event) => event.style.setProperty("--lane-level", "0"));
+          return;
+        }
+
+        const positionedEvents = events.map((event) => ({
+          node: event,
+          position: Number(event.style.getPropertyValue("--position") || 0)
+        }));
+
+        assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("top")));
+        assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("bottom")));
+      };
+
+      setEventPositions();
+      updateTimelineLayout();
+      window.addEventListener("resize", updateTimelineLayout);
+    })();
+  </script>
 </body>
 </html>
