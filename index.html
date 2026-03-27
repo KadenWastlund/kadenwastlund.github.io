@@ -225,14 +225,14 @@
     }
 
     .timeline-block {
+      position: relative;
       border-radius: 10px;
       height: 72px;
       border: 1px solid transparent;
-      padding: 0.35rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: center;
+      padding: 0.2rem;
+      display: grid;
+      gap: 0.12rem;
+      overflow: hidden;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.6rem;
       text-transform: uppercase;
@@ -251,10 +251,51 @@
       pointer-events: none;
     }
 
+    .timeline-block__segments {
+      min-height: 100%;
+      display: grid;
+      gap: 0.12rem;
+      width: 100%;
+    }
+
+    .timeline-block__segment {
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      width: 100%;
+      min-height: 0;
+      padding: 0.2rem;
+      text-align: center;
+      line-height: 1.05;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, rgba(255, 255, 255, 0.45) 60%, transparent);
+    }
+
+    .timeline-block__segment span {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .timeline-block__segment-count {
+      position: absolute;
+      top: 0.18rem;
+      right: 0.22rem;
+      font-size: 0.48rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      opacity: 0.72;
+    }
+
     .timeline-block::after {
       content: attr(data-month-label);
+      position: absolute;
+      left: 0.32rem;
+      bottom: 0.22rem;
       font-size: 0.55rem;
-      margin-top: 0.15rem;
       opacity: 0.85;
     }
 
@@ -302,6 +343,10 @@
       border-color: var(--accent);
       box-shadow: 0 10px 22px rgba(15, 109, 125, 0.35);
       transform: translateY(-2px);
+    }
+
+    .timeline-block--multi {
+      background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
     }
 
     .timeline-grid__legend {
@@ -421,6 +466,29 @@
       color: var(--muted);
       font-size: 0.95rem;
       line-height: 1.45;
+    }
+
+    .modal-entry-list {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .modal-entry-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--surface-strong) 96%, transparent);
+      padding: 0.8rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .modal-entry-card h4 {
+      font-size: 0.98rem;
+      color: var(--ink);
+    }
+
+    .modal-entry-card p {
+      font-size: 0.9rem;
     }
 
     .cta {
@@ -663,6 +731,33 @@
         (a, b) => new Date(b.start) - new Date(a.start)
       );
 
+      const getEntryBounds = (entry) => {
+        const start = new Date(entry.start);
+        const end = entry.end ? new Date(entry.end) : currentYearEnd;
+        return { start, end };
+      };
+
+      const getOverlapDays = (entry, monthDate) => {
+        const { start, end } = getEntryBounds(entry);
+        const monthStart = new Date(monthDate);
+        const monthEnd = new Date(monthStart);
+        monthEnd.setMonth(monthEnd.getMonth() + 1);
+        const overlapStart = start > monthStart ? start : monthStart;
+        const overlapEnd = end < monthEnd ? end : monthEnd;
+        const overlapMs = overlapEnd - overlapStart;
+        return overlapMs > 0 ? overlapMs / (1000 * 60 * 60 * 24) : 0;
+      };
+
+      const getEntriesForMonth = (monthDate) => {
+        const monthStart = new Date(monthDate);
+        const monthEnd = new Date(monthStart);
+        monthEnd.setMonth(monthEnd.getMonth() + 1);
+        return sortedEntries.filter((entry) => {
+          const { start, end } = getEntryBounds(entry);
+          return start < monthEnd && end >= monthStart;
+        });
+      };
+
       const months = [];
       const cursor = new Date(timelineStart);
       while (cursor < currentYearEnd) {
@@ -672,19 +767,6 @@
 
       const formatMonthLabel = (date) =>
         date.toLocaleString('en-US', { month: 'short', year: '2-digit' });
-
-      const findEntryForMonth = (monthDate) => {
-        const monthStart = new Date(monthDate);
-        const monthEnd = new Date(monthStart);
-        monthEnd.setMonth(monthEnd.getMonth() + 1);
-        return (
-          sortedEntries.find((entry) => {
-            const entryStart = new Date(entry.start);
-            const entryEnd = entry.end ? new Date(entry.end) : currentYearEnd;
-            return entryStart < monthEnd && entryEnd >= monthStart;
-          }) || null
-        );
-      };
 
       const renderTags = (list) =>
         list.map((tag) => `<span class='tag'>${tag}</span>`).join('');
@@ -700,12 +782,31 @@
         activeBlock = block;
       };
 
-      const openModal = (entry, monthLabel, block) => {
-        if (entry) {
+      const openModal = (entries, monthLabel, block) => {
+        if (entries.length === 1) {
+          const [entry] = entries;
           modalTitle.textContent = entry.title;
           modalSubtitle.textContent = entry.subtitle;
           modalDate.textContent = entry.rangeLabel;
           modalBody.innerHTML = `<p>${entry.description}</p><div class='tags'>${renderTags(entry.tags)}</div>`;
+        } else if (entries.length > 1) {
+          modalTitle.textContent = monthLabel;
+          modalSubtitle.textContent = 'Overlapping experience entries';
+          modalDate.textContent = monthLabel;
+          modalBody.innerHTML = `
+            <p>This month includes multiple overlapping entries. The timeline splits the block vertically to show proportional coverage.</p>
+            <div class='modal-entry-list'>
+              ${entries.map((entry) => `
+                <article class='modal-entry-card'>
+                  <h4>${entry.title}</h4>
+                  <p>${entry.subtitle}</p>
+                  <p>${entry.rangeLabel}</p>
+                  <p>${entry.description}</p>
+                  <div class='tags'>${renderTags(entry.tags)}</div>
+                </article>
+              `).join('')}
+            </div>
+          `;
         } else {
           modalTitle.textContent = monthLabel;
           modalSubtitle.textContent = 'No listed experience for this block.';
@@ -757,10 +858,35 @@
           block.dataset.monthLabel = monthLabel;
 
           const isFutureMonth = month.getFullYear() === now.getFullYear() && month > currentMonthStart;
-          const entry = isFutureMonth ? null : findEntryForMonth(month);
-          if (entry) {
-            block.classList.add(`timeline-block--${entry.type}`);
-            block.setAttribute('aria-label', `${monthLabel}, ${entry.title} at ${entry.subtitle}`);
+          const entries = isFutureMonth ? [] : getEntriesForMonth(month);
+          if (entries.length > 0) {
+            block.setAttribute('aria-label', `${monthLabel}, ${entries.map((entry) => `${entry.title} at ${entry.subtitle}`).join('; ')}`);
+            if (entries.length === 1) {
+              block.classList.add(`timeline-block--${entries[0].type}`);
+            } else {
+              block.classList.add('timeline-block--multi');
+            }
+
+            const segments = document.createElement('div');
+            segments.className = 'timeline-block__segments';
+            segments.style.gridTemplateRows = entries
+              .map((entry) => `${Math.max(getOverlapDays(entry, month), 1)}fr`)
+              .join(' ');
+            entries.forEach((entry) => {
+              const segment = document.createElement('div');
+              segment.className = 'timeline-block__segment';
+              segment.classList.add(`timeline-block--${entry.type}`);
+              segment.innerHTML = `<span>${entry.title}</span>`;
+              segments.appendChild(segment);
+            });
+            block.innerHTML = '';
+            block.appendChild(segments);
+            if (entries.length > 1) {
+              const count = document.createElement('span');
+              count.className = 'timeline-block__segment-count';
+              count.textContent = `${entries.length}x`;
+              block.appendChild(count);
+            }
           } else if (isFutureMonth) {
             block.classList.add('timeline-block--future');
             block.setAttribute('aria-label', `${monthLabel}, future month`);
@@ -776,7 +902,7 @@
           }
 
           if (!block.disabled) {
-            block.addEventListener('click', () => openModal(entry, monthLabel, block));
+            block.addEventListener('click', () => openModal(entries, monthLabel, block));
           }
           blocks.appendChild(block);
         });

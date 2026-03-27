@@ -43,6 +43,7 @@ The portfolio may describe:
 - Professional Experience tags keep `iOS` visible across entries for consistency
 - Education-focused technology tags such as `Kotlin` on the Dixie Technical College entry
 - Timeline blocks span each month from January 2023 through December of the current calendar year, wrap into year rows, keep future months in the current year visible as empty placeholders, color-code the active entry, and keep detail copy behind the modal triggered by a tap/click
+- When more than one entry overlaps a month, the block splits vertically in proportion to the amount of the month each entry covers so overlapping education and career stages are visible instead of collapsed into one block
 
 The portfolio should NOT claim:
 - Employers/roles/dates not present in the LinkedIn snapshot
