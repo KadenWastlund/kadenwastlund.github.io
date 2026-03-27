@@ -19,6 +19,7 @@ Last updated: 2026-03-27
 ## UI behavior notes
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
-- The timeline area now renders as yearly rows of fixed-size monthly blocks from January 2023 through December of the current calendar year; each row wraps at January, future months in the current year stay visible as empty placeholders, each active block is color-coded by experience category, and the current (Now) month remains highlighted.
+- The timeline area now renders as yearly rows of fixed-size monthly blocks from January 2023 through December of the current calendar year; each row wraps at January, future months in the current year stay visible as empty placeholders, each active block is color-coded by experience category, the tile itself shows only the month label, and the current (Now) month remains highlighted.
 - Each year row stays horizontally scrollable on narrow viewports, swaps to tighter heights, and keeps the legend/labels in place while preserving the glassy background treatment.
 - Clicking any block opens the detail modal, which still shows the original description and tags and remains centered at every breakpoint instead of flipping to a fullscreen takeover.
+- Timeline dates should be parsed as local calendar dates in `index.html`; using bare `new Date('YYYY-MM-DD')` can shift first-of-month entries into the prior month on negative-offset time zones.

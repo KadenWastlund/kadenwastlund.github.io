@@ -231,13 +231,13 @@
       border: 1px solid transparent;
       padding: 0.2rem;
       display: grid;
-      gap: 0.12rem;
+      place-items: center;
       overflow: hidden;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: none;
+      letter-spacing: 0.02em;
+      color: var(--ink);
       background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
@@ -249,54 +249,12 @@
 
     .timeline-block span {
       pointer-events: none;
-    }
-
-    .timeline-block__segments {
-      min-height: 100%;
-      display: grid;
-      gap: 0.12rem;
-      width: 100%;
-    }
-
-    .timeline-block__segment {
-      display: grid;
-      place-items: center;
-      border-radius: 7px;
-      width: 100%;
-      min-height: 0;
-      padding: 0.2rem;
-      text-align: center;
-      line-height: 1.05;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, rgba(255, 255, 255, 0.45) 60%, transparent);
-    }
-
-    .timeline-block__segment span {
       display: block;
-      font-size: 0.62rem;
+      font-size: 0.78rem;
       letter-spacing: 0.02em;
       text-transform: none;
-      white-space: normal;
-      overflow-wrap: anywhere;
-    }
-
-    .timeline-block__segment-count {
-      position: absolute;
-      top: 0.18rem;
-      right: 0.22rem;
-      font-size: 0.48rem;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      opacity: 0.72;
-    }
-
-    .timeline-block::after {
-      content: attr(data-month-label);
-      position: absolute;
-      left: 0.32rem;
-      bottom: 0.22rem;
-      font-size: 0.55rem;
-      opacity: 0.85;
+      text-align: center;
+      line-height: 1.05;
     }
 
     .timeline-block.is-active {
@@ -343,10 +301,6 @@
       border-color: var(--accent);
       box-shadow: 0 10px 22px rgba(15, 109, 125, 0.35);
       transform: translateY(-2px);
-    }
-
-    .timeline-block--multi {
-      background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
     }
 
     .timeline-grid__legend {
@@ -718,6 +672,15 @@
         }
       ];
 
+      const parseLocalDate = (value) => {
+        if (!value) {
+          return null;
+        }
+
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
+      };
+
       const timelineStart = new Date('2023-01-01T00:00:00');
       const now = new Date();
       const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -728,24 +691,13 @@
       }
 
       const sortedEntries = [...timelineEntries].sort(
-        (a, b) => new Date(b.start) - new Date(a.start)
+        (a, b) => parseLocalDate(b.start) - parseLocalDate(a.start)
       );
 
       const getEntryBounds = (entry) => {
-        const start = new Date(entry.start);
-        const end = entry.end ? new Date(entry.end) : currentYearEnd;
+        const start = parseLocalDate(entry.start);
+        const end = entry.end ? parseLocalDate(entry.end) : currentYearEnd;
         return { start, end };
-      };
-
-      const getOverlapDays = (entry, monthDate) => {
-        const { start, end } = getEntryBounds(entry);
-        const monthStart = new Date(monthDate);
-        const monthEnd = new Date(monthStart);
-        monthEnd.setMonth(monthEnd.getMonth() + 1);
-        const overlapStart = start > monthStart ? start : monthStart;
-        const overlapEnd = end < monthEnd ? end : monthEnd;
-        const overlapMs = overlapEnd - overlapStart;
-        return overlapMs > 0 ? overlapMs / (1000 * 60 * 60 * 24) : 0;
       };
 
       const getEntriesForMonth = (monthDate) => {
@@ -866,34 +818,16 @@
             } else {
               block.classList.add('timeline-block--multi');
             }
-
-            const segments = document.createElement('div');
-            segments.className = 'timeline-block__segments';
-            segments.style.gridTemplateRows = entries
-              .map((entry) => `${Math.max(getOverlapDays(entry, month), 1)}fr`)
-              .join(' ');
-            entries.forEach((entry) => {
-              const segment = document.createElement('div');
-              segment.className = 'timeline-block__segment';
-              segment.classList.add(`timeline-block--${entry.type}`);
-              segment.innerHTML = `<span>${entry.title}</span>`;
-              segments.appendChild(segment);
-            });
-            block.innerHTML = '';
-            block.appendChild(segments);
-            if (entries.length > 1) {
-              const count = document.createElement('span');
-              count.className = 'timeline-block__segment-count';
-              count.textContent = `${entries.length}x`;
-              block.appendChild(count);
-            }
+            block.textContent = monthLabel;
           } else if (isFutureMonth) {
             block.classList.add('timeline-block--future');
             block.setAttribute('aria-label', `${monthLabel}, future month`);
             block.disabled = true;
+            block.textContent = monthLabel;
           } else {
             block.classList.add('timeline-block--idle');
             block.setAttribute('aria-label', `${monthLabel}, no experience listed`);
+            block.textContent = monthLabel;
           }
 
           if (month.getTime() === currentMonthStart.getTime()) {
