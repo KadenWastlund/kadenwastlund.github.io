@@ -12,7 +12,7 @@ Last updated: 2026-03-27
 ## Content style rules
 
 - Prefer role-based experience language from LinkedIn experience sections.
-- Keep dates explicit (e.g., "Aug 2025 - Present").
+- Keep dates explicit in `mm/yy` format when month precision is used (e.g., "08/25 - Present").
 - Treat connection counts and similar metrics as snapshots.
 
 ## UI behavior notes

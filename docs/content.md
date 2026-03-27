@@ -17,12 +17,12 @@ This document defines what claims on the portfolio are currently supported by so
 - Location: St George, Utah, United States
 - Current company: ExpiTrans, Inc
 - Current role: Mobile Application Developer (Full-time)
-- Current role dates: Aug 2025 - Present
+- Current role dates: 08/25 - Present
 - Current role work model: On-site (United States)
 - Previous role: Engineering Intern at Fishbowl (Fishbowl Inventories)
-- Previous role dates: Aug 2024 - May 2025
+- Previous role dates: 08/24 - 05/25
 - Previous role location/work model: Orem, Utah, United States (Remote)
-- Education: Dixie Technical College, Mobile App Development, Feb 2023 - Jun 2024
+- Education: Dixie Technical College, Mobile App Development, 02/23 - 06/24
 - Education: Southwest High School, High School Diploma, 2020 - 2024
 - Top skills listed: Swift (Programming Language), iOS Development
 - Additional listed skills: Xcode, Git
@@ -39,7 +39,8 @@ The portfolio may describe:
 - iOS and mobile application development experience
 - Internship and full-time progression in mobile roles
 - Education pathway in mobile app development
-- Professional Experience tags that keep `iOS` visible across entries for consistency
+- Professional Experience tags include entry-type labels (`Occupation` and `Education`)
+- Professional Experience tags keep `iOS` visible across entries for consistency
 - Education-focused technology tags such as `Kotlin` on the Dixie Technical College entry
 
 The portfolio should NOT claim:

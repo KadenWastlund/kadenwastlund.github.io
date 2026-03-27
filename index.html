@@ -275,7 +275,7 @@
 
     .event {
       position: relative;
-      min-height: 270px;
+      min-height: 360px;
       display: flex;
       justify-content: center;
     }
@@ -312,7 +312,11 @@
     }
 
     .event-card {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
       width: min(238px, 100%);
+      max-width: calc(100% - 0.6rem);
       padding: 0.82rem;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -339,21 +343,22 @@
     }
 
     .event.top .event-card {
-      align-self: flex-start;
-      margin-bottom: 3.8rem;
+      bottom: calc(50% + 0.95rem);
     }
 
     .event.bottom .event-card {
-      align-self: flex-end;
-      margin-top: 3.8rem;
+      top: calc(50% + 0.95rem);
     }
 
     .event-edge-start .event-card {
-      margin-right: auto;
+      left: 0;
+      transform: none;
     }
 
     .event-edge-end .event-card {
-      margin-left: auto;
+      left: auto;
+      right: 0;
+      transform: none;
     }
 
     .cta {
@@ -491,6 +496,16 @@
         height: 2px;
       }
 
+      .event-card {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        transform: none;
+        max-width: none;
+      }
+
       .event.top .event-card,
       .event.bottom .event-card {
         align-self: auto;
@@ -538,41 +553,40 @@
         <article class="project-card">
           <div class="project-head">
             <h3>Mobile Application Developer</h3>
-            <span class="project-date">Aug 2025 - Present</span>
+            <span class="project-date">08/25 - Present</span>
           </div>
-          <p class="project-employer">ExpiTrans, Inc (Full-time, On-site, United States)</p>
+          <p class="project-employer">ExpiTrans, Inc</p>
           <p class="project-copy">Current role focused on production mobile app development and iOS design execution.</p>
           <div class="tags">
+            <span class="tag">Occupation</span>
             <span class="tag">iOS</span>
           </div>
-          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
         </article>
 
         <article class="project-card">
           <div class="project-head">
             <h3>Engineering Intern</h3>
-            <span class="project-date">Aug 2024 - May 2025</span>
+            <span class="project-date">08/24 - 05/25</span>
           </div>
-          <p class="project-employer">Fishbowl (Internship, Remote)</p>
+          <p class="project-employer">Fishbowl</p>
           <p class="project-copy">Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
           <div class="tags">
+            <span class="tag">Occupation</span>
             <span class="tag">iOS</span>
           </div>
-          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
         </article>
 
         <article class="project-card">
           <div class="project-head">
             <h3>Dixie Technical College</h3>
-            <span class="project-date">Feb 2023 - Jun 2024</span>
+            <span class="project-date">02/23 - 06/24</span>
           </div>
           <p class="project-copy">Mobile App Development program covering applied mobile fundamentals, API usage, and hands-on app implementation.</p>
           <div class="tags">
-            <span class="tag">Dixie Technical College</span>
+            <span class="tag">Education</span>
             <span class="tag">iOS</span>
             <span class="tag">Kotlin</span>
           </div>
-          <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View education source</a>
         </article>
       </div>
     </section>
