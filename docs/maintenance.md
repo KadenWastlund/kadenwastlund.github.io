@@ -18,6 +18,6 @@ Last updated: 2026-03-27
 ## UI behavior notes
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
-- The timeline area now renders as a horizontal series of monthly blocks from January 2020 through the start of next year; each block is color-coded by the active experience category, highlights the current (Now) month, and keeps the legend aligned with the visible track.
-- The block grid stays scrollable on narrow viewports, swaps to tighter heights, and keeps the legend/labels in place while preserving the glassy background treatment.
+- The timeline area now renders as yearly rows of monthly blocks from January 2020 through the start of the next calendar year; each row wraps at January, each block is color-coded by the active experience category, and the current (Now) month remains highlighted.
+- Each year row stays horizontally scrollable on narrow viewports, swaps to tighter heights, and keeps the legend/labels in place while preserving the glassy background treatment.
 - Clicking any block opens the detail modal, which still shows the original description and tags and remains centered at every breakpoint instead of flipping to a fullscreen takeover.

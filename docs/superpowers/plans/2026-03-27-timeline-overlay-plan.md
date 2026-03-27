@@ -2,7 +2,7 @@
 
 > **For agentic workers:** This plan replaces the previous axis/rail layout with the monthly block grid design described in the latest spec right above. Steps use checkbox (`- [ ]`) syntax for tracking progress if you choose to follow the steps sequentially.
 
-**Goal:** Render the experience timeline as a horizontal grid of color-coded monthly blocks that covers January 2020 through the year after today and keeps the detail modal centered across breakpoints.
+**Goal:** Render the experience timeline as year-wrapped rows of color-coded monthly blocks that cover January 2020 through the year after today and keep the detail modal centered across breakpoints.
 
 **Architecture:** Everything remains within `index.html`. The inline CSS now styles the new `.timeline-grid`, the JS builds the block collection and legend from the static entry data, and the modal logic still handles block clicks. Documentation updates follow in `docs/content.md` and `docs/maintenance.md`.
 
@@ -20,9 +20,9 @@
 
 **Files:** `index.html`
 
-- [ ] Replace the `.timeline-track` layout with the `.timeline-grid` structure, including the header labels, scrollable block container, and color legend.
+- [ ] Replace the `.timeline-track` layout with the `.timeline-grid` structure, including the header labels, year-wrapped block rows, and color legend.
 - [ ] Add CSS variants for each entry type (`education`, `program`, `internship`, `occupation`, `idle`) plus a `.timeline-block--current` highlight, and keep the scroll track responsive across breakpoints (narrow-block heights, consistent padding).
-- [ ] Keep the legend in place and ensure the entire track remains accessible when horizontal scrolling is required on phones.
+- [ ] Keep the legend in place and ensure each year row remains accessible when horizontal scrolling is required on phones.
 
 ### Task 3: Wire blocks to the modal
 
