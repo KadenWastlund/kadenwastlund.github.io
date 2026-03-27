@@ -132,61 +132,18 @@
       margin-bottom: 0.9rem;
     }
 
-    .grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .project-card {
-      border: 1px solid var(--border);
-      background: var(--surface-strong);
-      border-radius: 16px;
-      padding: 1rem;
-      display: grid;
-      gap: 0.65rem;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .project-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 18px rgba(15, 17, 20, 0.08);
-    }
-
-    .project-head {
-      display: flex;
-      align-items: baseline;
-    }
-
-    .project-head h3 {
-      font-size: 1.05rem;
-    }
-
-    .project-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.65rem;
-    }
-
-    .project-date {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .project-copy,
     .notes li,
     .event-card p {
       color: var(--muted);
       font-size: 0.95rem;
     }
 
-    .project-employer {
+    .event-subtitle {
       font-family: "IBM Plex Mono", monospace;
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       color: var(--muted);
-      letter-spacing: 0.01em;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
     .tags {
@@ -335,18 +292,26 @@
       box-shadow: 0 8px 16px rgba(13, 15, 20, 0.07);
       display: grid;
       gap: 0.38rem;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .event-card:hover,
+    .event-card:focus-visible {
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow: 0 10px 20px rgba(13, 15, 20, 0.12);
+    }
+
+    .event-card:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--accent) 80%, transparent);
+      outline-offset: 2px;
     }
 
     .event-card h3 {
       font-size: 0.92rem;
-    }
-
-    .event-time {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.7rem;
-      color: color-mix(in srgb, var(--muted) 76%, var(--ink));
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .event-card p {
@@ -359,6 +324,86 @@
 
     .event.bottom .event-card {
       top: calc(50% + 0.95rem + var(--level-offset));
+    }
+
+    .event-detail {
+      display: none;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 11, 16, 0.62);
+      padding: 1rem;
+      display: none;
+      place-items: center;
+      z-index: 50;
+    }
+
+    .modal-backdrop.is-open {
+      display: grid;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      max-height: calc(100vh - 2rem);
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface-strong);
+      box-shadow: 0 20px 42px rgba(8, 10, 14, 0.35);
+      padding: 1rem;
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 0.65rem;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      margin-top: 0.3rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.76rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .modal-date {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.74rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: inherit;
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .modal-body {
+      display: grid;
+      gap: 0.7rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
     }
 
     .cta {
@@ -512,6 +557,11 @@
         max-width: none;
       }
 
+      .event-card:hover,
+      .event-card:focus-visible {
+        transform: translateY(-2px);
+      }
+
       .event.top .event-card,
       .event.bottom .event-card {
         align-self: auto;
@@ -522,6 +572,17 @@
       .event-edge-start .event-card,
       .event-edge-end .event-card {
         margin: 0;
+      }
+
+      .modal-backdrop {
+        padding: 0;
+      }
+
+      .modal {
+        width: 100%;
+        max-height: none;
+        height: 100%;
+        border-radius: 0;
       }
     }
   </style>
@@ -554,106 +615,70 @@
     </section>
 
     <section class="panel">
-      <h2 class="section-title">Professional Experience</h2>
-      <div class="grid">
-        <article class="project-card">
-          <div class="project-head">
-            <h3>Mobile Application Developer</h3>
-          </div>
-          <div class="project-meta">
-            <p class="project-employer">ExpiTrans, Inc</p>
-            <span class="project-date">08/25 - Present</span>
-          </div>
-          <p class="project-copy">Current role focused on production mobile app development and iOS design execution.</p>
-          <div class="tags">
-            <span class="tag">Occupation</span>
-            <span class="tag">iOS</span>
-          </div>
-        </article>
-
-        <article class="project-card">
-          <div class="project-head">
-            <h3>Engineering Intern</h3>
-          </div>
-          <div class="project-meta">
-            <p class="project-employer">Fishbowl</p>
-            <span class="project-date">08/24 - 05/25</span>
-          </div>
-          <p class="project-copy">Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
-          <div class="tags">
-            <span class="tag">Occupation</span>
-            <span class="tag">iOS</span>
-          </div>
-        </article>
-
-        <article class="project-card">
-          <div class="project-head">
-            <h3>Dixie Technical College</h3>
-          </div>
-          <div class="project-meta">
-            <p class="project-employer">Education</p>
-            <span class="project-date">02/23 - 06/24</span>
-          </div>
-          <p class="project-copy">Mobile App Development program covering applied mobile fundamentals, API usage, and hands-on app implementation.</p>
-          <div class="tags">
-            <span class="tag">Education</span>
-            <span class="tag">iOS</span>
-            <span class="tag">Kotlin</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2 class="section-title">Timeline (2020 - Now)</h2>
+      <h2 class="section-title">Experience Timeline (2020 - Now)</h2>
       <div class="timeline-track">
         <span class="timeline-axis start">2020</span>
         <span class="timeline-axis end">Now</span>
         <ul class="timeline-events">
-          <li class="event top" data-date="2020-08-01">
+          <li class="event top" data-date="2020-08-01" data-date-label="2020 - 2024">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
-            <article class="event-card">
-              <h3>Started High School</h3>
-              <p class="event-time">August 2020</p>
-              <p>Southwest High School enrollment began (2020 - 2024)</p>
-            </article>
+            <button class="event-card" type="button">
+              <h3>High School Diploma</h3>
+              <p class="event-subtitle">Southwest High School</p>
+            </button>
+            <div class="event-detail" hidden>
+              <p>Completed a high school diploma and graduated in 2024.</p>
+              <div class="tags">
+                <span class="tag">Education</span>
+              </div>
+            </div>
           </li>
-          <li class="event bottom" data-date="2024-05-01">
+          <li class="event bottom" data-date="2023-02-01" data-date-label="02/23 - 06/24">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
-            <article class="event-card">
-              <h3>Graduated High School</h3>
-              <p class="event-time">May 2024</p>
-              <p>Southwest High School, 2024</p>
-            </article>
+            <button class="event-card" type="button">
+              <h3>Mobile App Development Program</h3>
+              <p class="event-subtitle">Dixie Technical College</p>
+            </button>
+            <div class="event-detail" hidden>
+              <p>Studied applied mobile development fundamentals with hands-on app implementation work.</p>
+              <div class="tags">
+                <span class="tag">Education</span>
+                <span class="tag">iOS</span>
+                <span class="tag">Kotlin</span>
+              </div>
+            </div>
           </li>
-          <li class="event top" data-date="2024-06-01">
+          <li class="event top" data-date="2024-08-01" data-date-label="08/24 - 05/25">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
-            <article class="event-card">
-              <h3>Graduated College</h3>
-              <p class="event-time">June 2024</p>
-              <p>Dixie Technical College (June 2024)</p>
-            </article>
+            <button class="event-card" type="button">
+              <h3>Engineering Intern</h3>
+              <p class="event-subtitle">Fishbowl Inventories</p>
+            </button>
+            <div class="event-detail" hidden>
+              <p>Completed a 10-month internship focused on mobile app development, MVC workflows, and team delivery.</p>
+              <div class="tags">
+                <span class="tag">Occupation</span>
+                <span class="tag">iOS</span>
+              </div>
+            </div>
           </li>
-          <li class="event bottom" data-date="2024-08-01">
+          <li class="event bottom" data-date="2025-08-01" data-date-label="08/25 - Present">
             <span class="event-marker"></span>
             <span class="event-branch"></span>
-            <article class="event-card">
-              <h3>Started Employment at Fishbowl Inventories</h3>
-              <p class="event-time">August 2024</p>
-              <p>Engineering Intern role began in August 2024</p>
-            </article>
-          </li>
-          <li class="event top" data-date="2025-08-01">
-            <span class="event-marker"></span>
-            <span class="event-branch"></span>
-            <article class="event-card">
-              <h3>Started Employment at ExpiTrans Inc</h3>
-              <p class="event-time">August 2025</p>
-              <p>Mobile Application Developer role began in August 2025</p>
-            </article>
+            <button class="event-card" type="button">
+              <h3>Mobile Application Developer</h3>
+              <p class="event-subtitle">ExpiTrans, Inc</p>
+            </button>
+            <div class="event-detail" hidden>
+              <p>Current role focused on production mobile app development and iOS design execution.</p>
+              <div class="tags">
+                <span class="tag">Occupation</span>
+                <span class="tag">iOS</span>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -662,7 +687,21 @@
     <footer>
       Source-grounded portfolio content maintained in <code>docs/content.md</code> from LinkedIn profile snapshot data.
     </footer>
+
   </main>
+  <div class="modal-backdrop" id="timeline-modal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="modal-title"></h3>
+          <p class="modal-subtitle" id="modal-subtitle"></p>
+        </div>
+        <button class="modal-close" type="button" id="modal-close" aria-label="Close detail view">&times;</button>
+      </div>
+      <p class="modal-date" id="modal-date"></p>
+      <div class="modal-body" id="modal-body"></div>
+    </section>
+  </div>
   <script>
     (() => {
       const timelineTrack = document.querySelector(".timeline-track");
@@ -670,6 +709,12 @@
 
       const timelineEvents = timelineTrack.querySelector(".timeline-events");
       const events = [...timelineTrack.querySelectorAll(".event[data-date]")];
+      const modal = document.getElementById("timeline-modal");
+      const modalTitle = document.getElementById("modal-title");
+      const modalSubtitle = document.getElementById("modal-subtitle");
+      const modalDate = document.getElementById("modal-date");
+      const modalBody = document.getElementById("modal-body");
+      const modalClose = document.getElementById("modal-close");
       if (!timelineEvents || events.length === 0) return;
 
       const timelineStart = new Date("2020-01-01T00:00:00");
@@ -734,6 +779,48 @@
       setEventPositions();
       updateTimelineLayout();
       window.addEventListener("resize", updateTimelineLayout);
+
+      const openModal = (eventNode) => {
+        if (!modal || !modalTitle || !modalSubtitle || !modalDate || !modalBody) return;
+
+        const card = eventNode.querySelector(".event-card");
+        const titleEl = card?.querySelector("h3");
+        const subtitleEl = card?.querySelector(".event-subtitle");
+        const detailEl = eventNode.querySelector(".event-detail");
+
+        modalTitle.textContent = titleEl?.textContent?.trim() || "";
+        modalSubtitle.textContent = subtitleEl?.textContent?.trim() || "";
+        modalDate.textContent = eventNode.dataset.dateLabel || "";
+        modalBody.innerHTML = detailEl?.innerHTML || "";
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      };
+
+      const closeModal = () => {
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      };
+
+      events.forEach((eventNode) => {
+        const card = eventNode.querySelector(".event-card");
+        if (!card) return;
+        card.addEventListener("click", () => openModal(eventNode));
+      });
+
+      modalClose?.addEventListener("click", closeModal);
+      modal?.addEventListener("click", (event) => {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal?.classList.contains("is-open")) {
+          closeModal();
+        }
+      });
     })();
   </script>
 </body>

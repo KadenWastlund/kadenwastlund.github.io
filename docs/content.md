@@ -26,12 +26,11 @@ This document defines what claims on the portfolio are currently supported by so
 - Education: Southwest High School, High School Diploma, 2020 - 2024
 - Top skills listed: Swift (Programming Language), iOS Development
 - Additional listed skills: Xcode, Git
-- Timeline events rendered on site (2020 -> Now):
-  - Started High School (Southwest High School enrollment began)
-  - Graduated High School
-  - Graduated college (Dixie Technical College)
-  - Started employment at Fishbowl Inventories
-  - Started employment at ExpiTrans Inc
+- Timeline entries rendered on site (2020 -> Now):
+  - High School Diploma (Southwest High School)
+  - Mobile App Development Program (Dixie Technical College)
+  - Engineering Intern (Fishbowl Inventories)
+  - Mobile Application Developer (ExpiTrans, Inc)
 
 ## Experience framing constraints
 
@@ -42,6 +41,7 @@ The portfolio may describe:
 - Professional Experience tags include entry-type labels (`Occupation` and `Education`)
 - Professional Experience tags keep `iOS` visible across entries for consistency
 - Education-focused technology tags such as `Kotlin` on the Dixie Technical College entry
+- Timeline cards display title and subtitle only; expanded details appear in a modal on click/tap
 
 The portfolio should NOT claim:
 - Employers/roles/dates not present in the LinkedIn snapshot
