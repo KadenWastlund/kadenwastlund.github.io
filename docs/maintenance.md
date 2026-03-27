@@ -18,8 +18,6 @@ Last updated: 2026-03-27
 ## UI behavior notes
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
-- Timeline markers are positioned proportionally along the span between January 2020 and January of the year after today, with edge clamping keeping the first/last cards fully visible.
-- Timeline cards alternate above/below the center line on desktop with extra vertical lanes when dates crowd together; at `max-width: 680px` the track turns into a centered vertical rail and cards stack to both sides of the line.
-- Timeline axis labels (`2020`, the year after the current year) render as small badges at the computed start/end positions so they stay connected to the actual rail.
-- Timeline cards show title and subtitle only; detailed copy and tags are shown in a modal when a card is clicked.
-- The detail modal is centered at every screen size instead of switching to a full-screen experience on mobile.
+- The timeline area now renders as a horizontal series of monthly blocks from January 2020 through the start of next year; each block is color-coded by the active experience category, highlights the current (Now) month, and keeps the legend aligned with the visible track.
+- The block grid stays scrollable on narrow viewports, swaps to tighter heights, and keeps the legend/labels in place while preserving the glassy background treatment.
+- Clicking any block opens the detail modal, which still shows the original description and tags and remains centered at every breakpoint instead of flipping to a fullscreen takeover.

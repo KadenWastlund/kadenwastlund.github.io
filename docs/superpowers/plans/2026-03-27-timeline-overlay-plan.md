@@ -1,127 +1,40 @@
-# Timeline Layout & Modal Implementation Plan
+# Experience Timeline Block Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** This plan replaces the previous axis/rail layout with the monthly block grid design described in the latest spec right above. Steps use checkbox (`- [ ]`) syntax for tracking progress if you choose to follow the steps sequentially.
 
-**Goal:** Align the timeline axis/selections to computed dates, keep the responsive line centered so cards stack neatly, and always show the detail view as a centered modal.
+**Goal:** Render the experience timeline as a horizontal grid of color-coded monthly blocks that covers January 2020 through the year after today and keeps the detail modal centered across breakpoints.
 
-**Architecture:** The changes live entirely in `index.html`, where the inline CSS controls both desktop and mobile layouts and the embedded script manages event positions and modal behavior. We will adjust the JS helpers to compute the axis span, tweak the CSS for centered responsive stacking plus a consistent modal, and document the behavior in `docs/maintenance.md`.
-
-**Tech Stack:** HTML, inline CSS, vanilla JavaScript.
+**Architecture:** Everything remains within `index.html`. The inline CSS now styles the new `.timeline-grid`, the JS builds the block collection and legend from the static entry data, and the modal logic still handles block clicks. Documentation updates follow in `docs/content.md` and `docs/maintenance.md`.
 
 ---
 
-### Task 1: Update timeline positioning logic
+### Task 1: Build the monthly block data model
 
-**Files:**
-- Modify: `index.html:713-810`
+**Files:** `index.html`
 
-- [ ] **Step 1: Compute the timeline span through the start of next year**
+- [ ] Compute the timeline span once from 2020-01-01 up to January 1st of `(current year + 1)` so blocks keep growing with time.
+- [ ] Iterate month-by-month to gather an array of `Date` objects, keeping a reference to the latest entry that was active during each month (prefer whichever entry started most recently when ranges overlap).
+- [ ] Store the entry metadata (title/subtitle/description/tags/type/range) in a structured array so the rendering logic can reuse it for both block classes and modal content.
 
-```js
-const timelineStart = new Date("2020-01-01T00:00:00");
-const getTimelineEnd = () => {
-  const now = new Date();
-  return new Date(`${now.getFullYear() + 1}-01-01T00:00:00`);
-};
-```
+### Task 2: Style the block grid
 
-- [ ] **Step 2: Update `setEventPositions` to use `getTimelineEnd` and clamp against the safe bounds**
+**Files:** `index.html`
 
-```js
-const setEventPositions = () => {
-  const timelineEnd = getTimelineEnd();
-  const startMs = timelineStart.getTime();
-  const endMs = timelineEnd.getTime();
-  const spanMs = Math.max(endMs - startMs, 1);
-  const safeBounds = getSafePositionBounds();
+- [ ] Replace the `.timeline-track` layout with the `.timeline-grid` structure, including the header labels, scrollable block container, and color legend.
+- [ ] Add CSS variants for each entry type (`education`, `program`, `internship`, `occupation`, `idle`) plus a `.timeline-block--current` highlight, and keep the scroll track responsive across breakpoints (narrow-block heights, consistent padding).
+- [ ] Keep the legend in place and ensure the entire track remains accessible when horizontal scrolling is required on phones.
 
-  events.forEach((event) => {
-    const eventMs = new Date(`${event.dataset.date}T00:00:00`).getTime();
-    const normalized = ((eventMs - startMs) / spanMs) * 100;
-    const position = clamp(normalized, safeBounds.min, safeBounds.max);
-    event.style.setProperty("--position", position.toFixed(4));
-  });
-};
-```
+### Task 3: Wire blocks to the modal
 
-- [ ] **Step 3: Ensure the computed end causes the axis labels to stay connected**
+**Files:** `index.html`
 
-No DOM edits—relying on the clamped `--position` updates above ensures that the farthest items sit next to the axis badges, so mention in plan that no HTML change is needed.
+- [ ] Render `button` elements for every month, annotate each block with `data-month-label`, and assign `aria-label`s that describe the month plus the entry details.
+- [ ] Highlight the block representing the current month on load, and make each block open the modal overlay with the matching entry detail (or a fallback message when no entry covers the month).
+- [ ] Reuse the existing modal markup, keeping the backdrop/ESC/backdrop-close behaviors untouched so it remains centered on all screen sizes.
 
-### Task 2: Center timeline line and modal across breakpoints
+### Task 4: Update documentation
 
-**Files:**
-- Modify: `index.html:171-238`, `index.html:480-680`
+**Files:** `docs/maintenance.md`, `docs/content.md`
 
-- [ ] **Step 1: Adjust the desktop/mobile `.timeline-track` pseudo-line**
-
-```css
-.timeline-track::before {
-  left: 50%;
-  right: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: calc(100% - 2rem);
-}
-@media (min-width: 681px) {
-  .timeline-track::before {
-    left: 1.4rem;
-    right: 1.4rem;
-    width: auto;
-    height: 4px;
-    transform: none;
-  }
-}
-```
-
-- [ ] **Step 2: Update mobile event layout so cards stack around the centered line**
-
-```css
-@media (max-width: 680px) {
-  .timeline-events {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.6rem;
-  }
-  .event { position: relative; width: 100%; display: flex; }
-  .event-card { width: 100%; }
-  .event.top .event-card { justify-self: flex-end; }
-  .event.bottom .event-card { justify-self: flex-start; }
-}
-```
-
-- [ ] **Step 3: Keep the modal centered on all screens**
-
-```css
-.modal-backdrop {
-  align-items: center;
-  justify-content: center;
-}
-.modal {
-  width: min(560px, 100%);
-  max-height: calc(100vh - 2rem);
-  border-radius: 18px;
-}
-@media (max-width: 680px) {
-  .modal {
-    width: min(560px, calc(100% - 2rem));
-    max-height: calc(100vh - 3rem);
-  }
-}
-```
-
-Remove any existing mobile overrides that set `width:100%` and `height:100%`, ensuring both breakpoints use centered modal styles.
-
-### Task 3: Document the new behavior
-
-**Files:**
-- Modify: `docs/maintenance.md:17-30`
-
-- [ ] **Step 1: Describe computed axis span and centered modal**
-
-Add/update bullets to note:
-1. Axis endpoints now derive from 2020 and `current year + 1` so the badges stay connected.
-2. Mobile layout moves the line to the center and allows cards to stack on both sides when space is limited.
-3. The detail view always opens in a centered modal overlay, even on mobile (no fullscreen takeover).
-
-No further steps required; this keeps documentation aligned with UI behavior.
+- [ ] Rewrite the UI behavior notes and content constraints to describe the monthly block timeline, the legend, and the modal-driven detail view.
+- [ ] Mention the new timeline approach in the supporting claims so maintainers know to keep the block data synced with LinkedIn snapshots.

@@ -168,197 +168,149 @@
       color: color-mix(in srgb, var(--accent-alt) 66%, var(--ink));
     }
 
-    .timeline-track {
-      position: relative;
-      padding: 2.5rem 0;
+    .timeline-grid {
+      display: grid;
+      gap: 0.95rem;
     }
 
-    .timeline-track::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 1.4rem;
-      bottom: 1.4rem;
-      width: 4px;
-      border-radius: 999px;
-      transform: translateX(-50%);
-      background: linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--accent) 92%, transparent),
-        color-mix(in srgb, var(--accent-alt) 90%, transparent)
-      );
-    }
-
-    @media (min-width: 681px) {
-      .timeline-track {
-        padding: 4.2rem 0.3rem 2.5rem;
-      }
-
-      .timeline-track::before {
-        left: 1.4rem;
-        right: 1.4rem;
-        top: 50%;
-        bottom: auto;
-        height: 4px;
-        width: auto;
-        transform: translateY(-50%);
-        background: linear-gradient(
-          90deg,
-          color-mix(in srgb, var(--accent) 92%, transparent),
-          color-mix(in srgb, var(--accent-alt) 90%, transparent)
-        );
-      }
-    }
-
-    .timeline-axis {
-      position: absolute;
-      top: 0.35rem;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.76rem;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--surface-strong) 84%, transparent);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.16rem 0.48rem;
-      line-height: 1;
-      z-index: 2;
-    }
-
-    .timeline-axis::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: calc(100% + 0.12rem);
-      width: 2px;
-      height: 0.7rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent) 45%, var(--border));
-      transform: translateX(-50%);
-    }
-
-    .timeline-axis.start {
-      left: 1.4rem;
-      transform: translateX(-50%);
-    }
-
-    .timeline-axis.end {
-      left: calc(100% - 1.4rem);
-      transform: translateX(-50%);
-    }
-
-    .timeline-events {
-      position: relative;
-      z-index: 1;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      min-height: 400px;
-    }
-
-    .event {
-      --position: 0;
-      --lane-level: 0;
-      --level-offset: calc(var(--lane-level) * 64px);
-      --branch-length: calc(48px + var(--level-offset));
-      position: absolute;
-      top: 0;
-      left: calc(1.4rem + (var(--position) * (100% - 2.8rem) / 100));
-      min-height: 400px;
-      width: 0;
+    .timeline-grid__header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
     }
 
-    .event-marker {
-      position: absolute;
-      left: 50%;
-      top: 50%;
+    .timeline-grid__track {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 0.6rem;
+      background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
+      box-shadow: 0 12px 30px rgba(13, 15, 20, 0.07);
+    }
+
+    .timeline-grid__scroll {
+      overflow-x: auto;
+      padding-bottom: 0.45rem;
+    }
+
+    .timeline-grid__blocks {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(60px, 1fr);
+      gap: 0.35rem;
+    }
+
+    .timeline-block {
+      border-radius: 10px;
+      height: 72px;
+      border: 1px solid transparent;
+      padding: 0.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .timeline-block span {
+      pointer-events: none;
+    }
+
+    .timeline-block::after {
+      content: attr(data-month-label);
+      font-size: 0.55rem;
+      margin-top: 0.15rem;
+      opacity: 0.85;
+    }
+
+    .timeline-block.is-active {
+      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+      box-shadow: 0 10px 22px rgba(15, 109, 125, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .timeline-block--education {
+      background: color-mix(in srgb, #d6f4ff 72%, var(--surface-strong));
+      color: #0e3f58;
+    }
+
+    .timeline-block--program {
+      background: color-mix(in srgb, #ffe3c5 70%, var(--surface-strong));
+      color: #604923;
+    }
+
+    .timeline-block--internship {
+      background: color-mix(in srgb, #ffe1ff 70%, var(--surface-strong));
+      color: #3e1f4c;
+    }
+
+    .timeline-block--occupation {
+      background: color-mix(in srgb, #c5fdd2 70%, var(--surface-strong));
+      color: #1b4a26;
+    }
+
+    .timeline-block--idle {
+      background: color-mix(in srgb, var(--border) 40%, var(--surface-strong));
+      color: var(--muted);
+    }
+
+    .timeline-block--current {
+      border-color: var(--accent);
+      box-shadow: 0 10px 22px rgba(15, 109, 125, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .timeline-grid__legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .timeline-grid__legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-marker {
       width: 14px;
       height: 14px;
-      border-radius: 999px;
-      transform: translate(-50%, -50%);
-      border: 2px solid var(--surface-strong);
-      background: var(--accent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
+      border-radius: 4px;
+      border: 1px solid transparent;
     }
 
-    .event-branch {
-      position: absolute;
-      left: 50%;
-      width: 2px;
-      transform: translateX(-50%);
-      background: color-mix(in srgb, var(--accent) 62%, transparent);
+    .legend-marker--education {
+      background: color-mix(in srgb, #d6f4ff 90%, var(--surface-strong));
+      border-color: #7bc7df;
     }
 
-    .event.top .event-branch {
-      top: calc(50% - var(--branch-length));
-      height: var(--branch-length);
+    .legend-marker--program {
+      background: color-mix(in srgb, #ffe3c5 90%, var(--surface-strong));
+      border-color: #c78a43;
     }
 
-    .event.bottom .event-branch {
-      top: 50%;
-      height: var(--branch-length);
+    .legend-marker--internship {
+      background: color-mix(in srgb, #ffe1ff 90%, var(--surface-strong));
+      border-color: #c271a3;
     }
 
-    .event-card {
-      position: absolute;
-      left: 0;
-      --card-x: -50%;
-      transform: translateX(var(--card-x));
-      width: 238px;
-      max-width: none;
-      padding: 0.82rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
-      box-shadow: 0 8px 16px rgba(13, 15, 20, 0.07);
-      display: grid;
-      gap: 0.38rem;
-      text-align: left;
-      cursor: pointer;
-      font: inherit;
-      color: inherit;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .legend-marker--occupation {
+      background: color-mix(in srgb, #c5fdd2 90%, var(--surface-strong));
+      border-color: #56c478;
     }
 
-    .event-card:hover,
-    .event-card:focus-visible {
-      transform: translateX(var(--card-x)) translateY(-2px);
-      box-shadow: 0 10px 20px rgba(13, 15, 20, 0.12);
-    }
-
-    .event-card:focus-visible {
-      outline: 2px solid color-mix(in srgb, var(--accent) 80%, transparent);
-      outline-offset: 2px;
-    }
-
-    .event-card h3 {
-      font-size: 0.92rem;
-    }
-
-    .event-card p {
-      line-height: 1.45;
-    }
-
-    .event.top .event-card {
-      bottom: calc(50% + 0.95rem + var(--level-offset));
-    }
-
-    .event.bottom .event-card {
-      top: calc(50% + 0.95rem + var(--level-offset));
-    }
-
-    .event.edge-start .event-card {
-      --card-x: 0%;
-    }
-
-    .event.edge-end .event-card {
-      --card-x: -100%;
-    }
-
-    .event-detail {
-      display: none;
-    }
 
     .modal-backdrop {
       position: fixed;
@@ -498,92 +450,21 @@
         border-radius: 16px;
       }
 
-      .timeline-track {
-        padding: 1.5rem 0;
+      .timeline-grid__track {
+        padding: 0.4rem;
       }
 
-      .timeline-axis {
-        left: 50%;
-        top: 0;
-        font-size: 0.7rem;
-        padding: 0.14rem 0.4rem;
-        transform: translate(-50%, 0);
+      .timeline-grid__blocks {
+        grid-auto-columns: minmax(48px, 1fr);
+        gap: 0.3rem;
       }
 
-      .timeline-axis::after {
-        left: 50%;
-        top: calc(100% + 0.12rem);
-        width: 2px;
-        height: 0.7rem;
-        transform: translateX(-50%);
+      .timeline-block {
+        height: 60px;
       }
 
-      .timeline-axis.start {
-        top: 0;
-        transform: translate(-50%, -10%);
-      }
-
-      .timeline-axis.end {
-        bottom: 0;
-        top: auto;
-        transform: translate(-50%, 10%);
-      }
-
-      .timeline-events {
-        min-height: auto;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.9rem;
-      }
-
-      .event {
-        position: relative;
-        top: auto;
-        left: auto;
-        width: 100%;
-        min-height: auto;
-        display: block;
-      }
-
-      .event.top {
-        grid-column: 2;
-      }
-
-      .event.bottom {
-        grid-column: 1;
-      }
-
-      .event-marker {
-        left: 50%;
-        top: 50%;
-      }
-
-      .event-branch {
-        left: 50%;
-        top: 50%;
-        height: 2px;
-        width: 26px;
-        transform: translate(-50%, -50%);
-      }
-
-      .event-card {
-        position: relative;
-        width: min(90%, 100%);
-        max-width: 320px;
-        margin: 0;
-      }
-
-      .event.top .event-card {
-        margin-left: auto;
-      }
-
-      .event.bottom .event-card {
-        margin-right: auto;
-      }
-
-      .event.top .event-card,
-      .event.bottom .event-card {
-        align-self: center;
+      .timeline-grid__legend {
+        font-size: 0.72rem;
       }
 
       .modal-backdrop {
@@ -597,6 +478,7 @@
         border-radius: 18px;
       }
     }
+
   </style>
 </head>
 <body>
@@ -626,73 +508,36 @@
       </ul>
     </section>
 
-    <section class="panel">
-      <h2 class="section-title">Experience Timeline (2020 - Now)</h2>
-      <div class="timeline-track">
-        <span class="timeline-axis start">2020</span>
-        <span class="timeline-axis end">Now</span>
-        <ul class="timeline-events">
-          <li class="event top" data-date="2020-08-01" data-date-label="2020 - 2024">
-            <span class="event-marker"></span>
-            <span class="event-branch"></span>
-            <button class="event-card" type="button">
-              <h3>High School Diploma</h3>
-              <p class="event-subtitle">Southwest High School</p>
-            </button>
-            <div class="event-detail" hidden>
-              <p>Completed a high school diploma and graduated in 2024.</p>
-              <div class="tags">
-                <span class="tag">Education</span>
-              </div>
-            </div>
-          </li>
-          <li class="event bottom" data-date="2023-02-01" data-date-label="02/23 - 06/24">
-            <span class="event-marker"></span>
-            <span class="event-branch"></span>
-            <button class="event-card" type="button">
-              <h3>Mobile App Development Program</h3>
-              <p class="event-subtitle">Dixie Technical College</p>
-            </button>
-            <div class="event-detail" hidden>
-              <p>Studied applied mobile development fundamentals with hands-on app implementation work.</p>
-              <div class="tags">
-                <span class="tag">Education</span>
-                <span class="tag">iOS</span>
-                <span class="tag">Kotlin</span>
-              </div>
-            </div>
-          </li>
-          <li class="event top" data-date="2024-08-01" data-date-label="08/24 - 05/25">
-            <span class="event-marker"></span>
-            <span class="event-branch"></span>
-            <button class="event-card" type="button">
-              <h3>Engineering Intern</h3>
-              <p class="event-subtitle">Fishbowl Inventories</p>
-            </button>
-            <div class="event-detail" hidden>
-              <p>Completed a 10-month internship focused on mobile app development, MVC workflows, and team delivery.</p>
-              <div class="tags">
-                <span class="tag">Occupation</span>
-                <span class="tag">iOS</span>
-              </div>
-            </div>
-          </li>
-          <li class="event bottom" data-date="2025-08-01" data-date-label="08/25 - Present">
-            <span class="event-marker"></span>
-            <span class="event-branch"></span>
-            <button class="event-card" type="button">
-              <h3>Mobile Application Developer</h3>
-              <p class="event-subtitle">ExpiTrans, Inc</p>
-            </button>
-            <div class="event-detail" hidden>
-              <p>Current role focused on production mobile app development and iOS design execution.</p>
-              <div class="tags">
-                <span class="tag">Occupation</span>
-                <span class="tag">iOS</span>
-              </div>
-            </div>
-          </li>
-        </ul>
+    <section class='panel'>
+      <h2 class='section-title'>Experience Timeline (2020 - Now)</h2>
+      <div class='timeline-grid' aria-label='Experience block timeline spanning January 2020 through the year after today'>
+        <div class='timeline-grid__header'>
+          <span>Jan 2020</span>
+          <span id='timeline-grid-now-label'>Now</span>
+        </div>
+        <div class='timeline-grid__track'>
+          <div class='timeline-grid__scroll'>
+            <div class='timeline-grid__blocks' id='timeline-grid-blocks' role='list'></div>
+          </div>
+        </div>
+        <div class='timeline-grid__legend'>
+          <span class='legend-item'>
+            <span class='legend-marker legend-marker--education'></span>
+            Education
+          </span>
+          <span class='legend-item'>
+            <span class='legend-marker legend-marker--program'></span>
+            Mobile program
+          </span>
+          <span class='legend-item'>
+            <span class='legend-marker legend-marker--internship'></span>
+            Internship
+          </span>
+          <span class='legend-item'>
+            <span class='legend-marker legend-marker--occupation'></span>
+            Occupation
+          </span>
+        </div>
       </div>
     </section>
 
@@ -712,156 +557,185 @@
   </div>
   <script>
     (() => {
-      const timelineTrack = document.querySelector(".timeline-track");
-      if (!timelineTrack) return;
+      const timelineBlocks = document.getElementById('timeline-grid-blocks');
+      const nowLabel = document.getElementById('timeline-grid-now-label');
+      const modal = document.getElementById('timeline-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalSubtitle = document.getElementById('modal-subtitle');
+      const modalDate = document.getElementById('modal-date');
+      const modalBody = document.getElementById('modal-body');
+      const modalClose = document.getElementById('modal-close');
 
-      const timelineEvents = timelineTrack.querySelector(".timeline-events");
-      const events = [...timelineTrack.querySelectorAll(".event[data-date]")];
-      const modal = document.getElementById("timeline-modal");
-      const modalTitle = document.getElementById("modal-title");
-      const modalSubtitle = document.getElementById("modal-subtitle");
-      const modalDate = document.getElementById("modal-date");
-      const modalBody = document.getElementById("modal-body");
-      const modalClose = document.getElementById("modal-close");
-      const axisEnd = timelineTrack.querySelector(".timeline-axis.end");
-      if (!timelineEvents || events.length === 0) return;
+      if (!timelineBlocks || !modal || !modalTitle || !modalSubtitle || !modalDate || !modalBody) {
+        return;
+      }
 
-      const timelineStart = new Date("2020-01-01T00:00:00");
+      const timelineEntries = [
+        {
+          id: 'high-school',
+          title: 'High School Diploma',
+          subtitle: 'Southwest High School',
+          description: 'Completed a high school diploma and graduated in 2024.',
+          tags: ['Education'],
+          start: '2020-08-01',
+          end: '2024-06-15',
+          rangeLabel: '2020 - 2024',
+          type: 'education'
+        },
+        {
+          id: 'mobile-program',
+          title: 'Mobile App Development Program',
+          subtitle: 'Dixie Technical College',
+          description: 'Studied applied mobile development fundamentals with hands-on app implementation work.',
+          tags: ['Education', 'iOS', 'Kotlin'],
+          start: '2023-02-01',
+          end: '2024-06-30',
+          rangeLabel: '02/23 - 06/24',
+          type: 'program'
+        },
+        {
+          id: 'engineering-intern',
+          title: 'Engineering Intern',
+          subtitle: 'Fishbowl Inventories',
+          description: 'Completed a 10-month internship focused on mobile app development, MVC workflows, and team delivery.',
+          tags: ['Occupation', 'iOS'],
+          start: '2024-08-01',
+          end: '2025-05-31',
+          rangeLabel: '08/24 - 05/25',
+          type: 'internship'
+        },
+        {
+          id: 'mobile-developer',
+          title: 'Mobile Application Developer',
+          subtitle: 'ExpiTrans, Inc',
+          description: 'Current role focused on production mobile app development and iOS design execution.',
+          tags: ['Occupation', 'iOS'],
+          start: '2025-08-01',
+          end: null,
+          rangeLabel: '08/25 - Present',
+          type: 'occupation'
+        }
+      ];
+
+      const timelineStart = new Date('2020-01-01T00:00:00');
       const getTimelineEnd = () => {
         const now = new Date();
-        return new Date(`${now.getFullYear() + 1}-01-01T00:00:00`);
+        return new Date(now.getFullYear() + 1, 0, 1);
       };
-      const gapPx = 18;
-      const laneCardWidthPx = 238;
-      const edgePaddingPx = 10;
+      const timelineEnd = getTimelineEnd();
+      const now = new Date();
 
-      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      if (nowLabel) {
+        nowLabel.textContent = `Now · ${now.getFullYear()}`;
+      }
 
-      const getSafePositionBounds = () => {
-        const trackWidth = Math.max(timelineEvents.clientWidth, 1);
-        const insetPct = ((laneCardWidthPx / 2) + edgePaddingPx) / trackWidth * 100;
-        return {
-          min: clamp(insetPct, 0, 49),
-          max: clamp(100 - insetPct, 51, 100)
-        };
+      const sortedEntries = [...timelineEntries].sort(
+        (a, b) => new Date(b.start) - new Date(a.start)
+      );
+
+      const months = [];
+      const cursor = new Date(timelineStart);
+      while (cursor < timelineEnd) {
+        months.push(new Date(cursor));
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      const formatMonthLabel = (date) =>
+        date.toLocaleString('en-US', { month: 'short', year: '2-digit' });
+
+      const monthStartForNow = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      const findEntryForMonth = (monthDate) => {
+        const monthStart = new Date(monthDate);
+        const monthEnd = new Date(monthStart);
+        monthEnd.setMonth(monthEnd.getMonth() + 1);
+        return (
+          sortedEntries.find((entry) => {
+            const entryStart = new Date(entry.start);
+            const entryEnd = entry.end ? new Date(entry.end) : timelineEnd;
+            return entryStart < monthEnd && entryEnd >= monthStart;
+          }) || null
+        );
       };
 
-      // Positions markers by elapsed time since timeline start to "now" (current date).
-      const setEventPositions = () => {
-        const timelineEnd = getTimelineEnd();
-        const startMs = timelineStart.getTime();
-        const endMs = timelineEnd.getTime();
-        const timelineSpanMs = Math.max(endMs - startMs, 1);
-        const safeBounds = getSafePositionBounds();
-        if (axisEnd) {
-          axisEnd.textContent = String(timelineEnd.getFullYear());
+      const renderTags = (list) =>
+        list.map((tag) => `<span class='tag'>${tag}</span>`).join('');
+
+      let activeBlock = null;
+      const activateBlock = (block) => {
+        if (activeBlock) {
+          activeBlock.classList.remove('is-active');
         }
-
-        events.forEach((event) => {
-          const eventMs = new Date(`${event.dataset.date}T00:00:00`).getTime();
-          const normalized = ((eventMs - startMs) / timelineSpanMs) * 100;
-          const position = clamp(normalized, safeBounds.min, safeBounds.max);
-          event.style.setProperty("--position", position.toFixed(4));
-        });
-      };
-
-      // Adds extra vertical lanes on crowded dates so cards do not overlap.
-      const assignLaneLevels = (laneEvents) => {
-        const laneRightEdges = [];
-        laneEvents
-          .sort((a, b) => a.position - b.position)
-          .forEach((event) => {
-            const centerPx = (event.position / 100) * timelineEvents.clientWidth;
-            const leftPx = centerPx - laneCardWidthPx / 2;
-
-            let laneLevel = 0;
-            while (
-              laneRightEdges[laneLevel] !== undefined &&
-              leftPx < laneRightEdges[laneLevel] + gapPx
-            ) {
-              laneLevel += 1;
-            }
-
-            laneRightEdges[laneLevel] = leftPx + laneCardWidthPx;
-            event.node.style.setProperty("--lane-level", String(laneLevel));
-          });
-      };
-
-      const updateTimelineLayout = () => {
-        const desktopMode = window.matchMedia("(max-width: 680px)").matches === false;
-        const safeBounds = getSafePositionBounds();
-        if (!desktopMode) {
-          events.forEach((event) => {
-            event.style.setProperty("--lane-level", "0");
-            event.classList.remove("edge-start", "edge-end");
-          });
-          return;
+        if (block) {
+          block.classList.add('is-active');
         }
-
-        const positionedEvents = events.map((event) => ({
-          node: event,
-          position: Number(event.style.getPropertyValue("--position") || 0)
-        }));
-
-        positionedEvents.forEach((event) => {
-          event.node.classList.toggle("edge-start", event.position <= safeBounds.min + 0.01);
-          event.node.classList.toggle("edge-end", event.position >= safeBounds.max - 0.01);
-        });
-
-        assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("top")));
-        assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("bottom")));
+        activeBlock = block;
       };
 
-      const syncTimelineLayout = () => {
-        setEventPositions();
-        updateTimelineLayout();
-      };
-
-      syncTimelineLayout();
-      window.addEventListener("resize", syncTimelineLayout);
-
-      const openModal = (eventNode) => {
-        if (!modal || !modalTitle || !modalSubtitle || !modalDate || !modalBody) return;
-
-        const card = eventNode.querySelector(".event-card");
-        const titleEl = card?.querySelector("h3");
-        const subtitleEl = card?.querySelector(".event-subtitle");
-        const detailEl = eventNode.querySelector(".event-detail");
-
-        modalTitle.textContent = titleEl?.textContent?.trim() || "";
-        modalSubtitle.textContent = subtitleEl?.textContent?.trim() || "";
-        modalDate.textContent = eventNode.dataset.dateLabel || "";
-        modalBody.innerHTML = detailEl?.innerHTML || "";
-        modal.classList.add("is-open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
+      const openModal = (entry, monthLabel, block) => {
+        if (entry) {
+          modalTitle.textContent = entry.title;
+          modalSubtitle.textContent = entry.subtitle;
+          modalDate.textContent = entry.rangeLabel;
+          modalBody.innerHTML = `<p>${entry.description}</p><div class='tags'>${renderTags(entry.tags)}</div>`;
+        } else {
+          modalTitle.textContent = monthLabel;
+          modalSubtitle.textContent = 'No listed experience for this block.';
+          modalDate.textContent = monthLabel;
+          modalBody.innerHTML = '<p>No experience entries are tagged for this month.</p>';
+        }
+        activateBlock(block);
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
       };
 
       const closeModal = () => {
-        if (!modal) return;
-        modal.classList.remove("is-open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
       };
 
-      events.forEach((eventNode) => {
-        const card = eventNode.querySelector(".event-card");
-        if (!card) return;
-        card.addEventListener("click", () => openModal(eventNode));
+      timelineBlocks.innerHTML = '';
+      months.forEach((month) => {
+        const monthLabel = formatMonthLabel(month);
+        const block = document.createElement('button');
+        block.setAttribute('type', 'button');
+        block.classList.add('timeline-block');
+        block.dataset.monthLabel = monthLabel;
+
+        const entry = findEntryForMonth(month);
+        if (entry) {
+          block.classList.add(`timeline-block--${entry.type}`);
+          block.setAttribute('aria-label', `${monthLabel}, ${entry.title} at ${entry.subtitle}`);
+        } else {
+          block.classList.add('timeline-block--idle');
+          block.setAttribute('aria-label', `${monthLabel}, no experience listed`);
+        }
+
+        if (month.getTime() === monthStartForNow.getTime()) {
+          block.classList.add('timeline-block--current');
+          activateBlock(block);
+        }
+
+        block.addEventListener('click', () => openModal(entry, monthLabel, block));
+        timelineBlocks.appendChild(block);
       });
 
-      modalClose?.addEventListener("click", closeModal);
-      modal?.addEventListener("click", (event) => {
+      modalClose?.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => {
         if (event.target === modal) {
           closeModal();
         }
       });
-      window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && modal?.classList.contains("is-open")) {
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
           closeModal();
         }
       });
     })();
   </script>
+
+
 </body>
 </html>
