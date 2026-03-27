@@ -707,7 +707,7 @@
       }
 
       const formatMonthLabel = (date) =>
-        date.toLocaleString('en-US', { month: 'short', year: '2-digit' });
+        date.toLocaleString('en-US', { month: 'short' });
 
       const renderTags = (list) =>
         list.map((tag) => `<span class='tag'>${tag}</span>`).join('');
