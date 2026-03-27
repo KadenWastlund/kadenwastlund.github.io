@@ -782,7 +782,7 @@
 
         const yearHead = document.createElement('div');
         yearHead.className = 'timeline-grid__year-head';
-        yearHead.innerHTML = `<span>Year ${year}</span><span>${yearMonths[0].toLocaleString('en-US', { month: 'short' })} - ${yearMonths[yearMonths.length - 1].toLocaleString('en-US', { month: 'short' })}</span>`;
+        yearHead.textContent = `Year ${year}`;
 
         const scroll = document.createElement('div');
         scroll.className = 'timeline-grid__scroll';
