@@ -231,18 +231,18 @@
       list-style: none;
       margin: 0;
       padding: 0;
-      min-height: 520px;
+      min-height: 400px;
     }
 
     .event {
       --position: 0;
       --lane-level: 0;
-      --level-offset: calc(var(--lane-level) * 78px);
-      --branch-length: calc(62px + var(--level-offset));
+      --level-offset: calc(var(--lane-level) * 64px);
+      --branch-length: calc(48px + var(--level-offset));
       position: absolute;
       top: 0;
       left: calc(1.4rem + (var(--position) * (100% - 2.8rem) / 100));
-      min-height: 520px;
+      min-height: 400px;
       width: 0;
       display: flex;
       justify-content: center;
@@ -281,10 +281,11 @@
 
     .event-card {
       position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(238px, 100%);
-      max-width: calc(100% - 0.6rem);
+      left: 0;
+      --card-x: -50%;
+      transform: translateX(var(--card-x));
+      width: 238px;
+      max-width: none;
       padding: 0.82rem;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -301,7 +302,7 @@
 
     .event-card:hover,
     .event-card:focus-visible {
-      transform: translateX(-50%) translateY(-2px);
+      transform: translateX(var(--card-x)) translateY(-2px);
       box-shadow: 0 10px 20px rgba(13, 15, 20, 0.12);
     }
 
@@ -324,6 +325,14 @@
 
     .event.bottom .event-card {
       top: calc(50% + 0.95rem + var(--level-offset));
+    }
+
+    .event.edge-start .event-card {
+      --card-x: 0%;
+    }
+
+    .event.edge-end .event-card {
+      --card-x: -100%;
     }
 
     .event-detail {
@@ -550,6 +559,7 @@
       .event-card {
         position: relative;
         left: auto;
+        width: 100%;
         right: auto;
         top: auto;
         bottom: auto;
@@ -569,8 +579,8 @@
         width: 100%;
       }
 
-      .event-edge-start .event-card,
-      .event-edge-end .event-card {
+      .event.edge-start .event-card,
+      .event.edge-end .event-card {
         margin: 0;
       }
 
@@ -720,8 +730,18 @@
       const timelineStart = new Date("2020-01-01T00:00:00");
       const gapPx = 18;
       const laneCardWidthPx = 238;
+      const edgePaddingPx = 10;
 
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      const getSafePositionBounds = () => {
+        const trackWidth = Math.max(timelineEvents.clientWidth, 1);
+        const insetPct = ((laneCardWidthPx / 2) + edgePaddingPx) / trackWidth * 100;
+        return {
+          min: clamp(insetPct, 0, 49),
+          max: clamp(100 - insetPct, 51, 100)
+        };
+      };
 
       // Positions markers by elapsed time since timeline start to "now" (current date).
       const setEventPositions = () => {
@@ -729,11 +749,12 @@
         const startMs = timelineStart.getTime();
         const nowMs = now.getTime();
         const timelineSpanMs = Math.max(nowMs - startMs, 1);
+        const safeBounds = getSafePositionBounds();
 
         events.forEach((event) => {
           const eventMs = new Date(`${event.dataset.date}T00:00:00`).getTime();
           const normalized = ((eventMs - startMs) / timelineSpanMs) * 100;
-          const position = clamp(normalized, 0, 100);
+          const position = clamp(normalized, safeBounds.min, safeBounds.max);
           event.style.setProperty("--position", position.toFixed(4));
         });
       };
@@ -762,8 +783,12 @@
 
       const updateTimelineLayout = () => {
         const desktopMode = window.matchMedia("(max-width: 680px)").matches === false;
+        const safeBounds = getSafePositionBounds();
         if (!desktopMode) {
-          events.forEach((event) => event.style.setProperty("--lane-level", "0"));
+          events.forEach((event) => {
+            event.style.setProperty("--lane-level", "0");
+            event.classList.remove("edge-start", "edge-end");
+          });
           return;
         }
 
@@ -772,13 +797,22 @@
           position: Number(event.style.getPropertyValue("--position") || 0)
         }));
 
+        positionedEvents.forEach((event) => {
+          event.node.classList.toggle("edge-start", event.position <= safeBounds.min + 0.01);
+          event.node.classList.toggle("edge-end", event.position >= safeBounds.max - 0.01);
+        });
+
         assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("top")));
         assignLaneLevels(positionedEvents.filter((event) => event.node.classList.contains("bottom")));
       };
 
-      setEventPositions();
-      updateTimelineLayout();
-      window.addEventListener("resize", updateTimelineLayout);
+      const syncTimelineLayout = () => {
+        setEventPositions();
+        updateTimelineLayout();
+      };
+
+      syncTimelineLayout();
+      window.addEventListener("resize", syncTimelineLayout);
 
       const openModal = (eventNode) => {
         if (!modal || !modalTitle || !modalSubtitle || !modalDate || !modalBody) return;

@@ -18,7 +18,7 @@ Last updated: 2026-03-27
 ## UI behavior notes
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
-- Timeline markers are positioned proportionally to elapsed time from January 2020 to the current date ("Now"), rather than evenly spaced by item count.
+- Timeline markers are positioned proportionally to elapsed time from January 2020 to the current date ("Now"), with edge clamping so first/last cards stay fully visible.
 - Timeline cards alternate above/below the center line on desktop and can shift into additional vertical lanes when dates are close, then stack into a vertical rail on mobile (`max-width: 680px`).
 - Timeline axis labels (`2020`, `Now`) render as small badges with short pointer ticks at the start and end of the timeline rail.
 - Timeline cards show title and subtitle only; detailed copy and tags are shown in a modal when a card is clicked.
