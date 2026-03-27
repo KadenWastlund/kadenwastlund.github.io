@@ -220,7 +220,7 @@
     .timeline-grid__blocks {
       display: grid;
       grid-auto-flow: column;
-      grid-auto-columns: minmax(60px, 1fr);
+      grid-auto-columns: minmax(62px, 62px);
       gap: 0.35rem;
     }
 
@@ -241,6 +241,10 @@
       background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
+    }
+
+    .timeline-block:disabled {
+      cursor: default;
     }
 
     .timeline-block span {
@@ -283,6 +287,15 @@
     .timeline-block--idle {
       background: color-mix(in srgb, var(--border) 40%, var(--surface-strong));
       color: var(--muted);
+    }
+
+    .timeline-block--future {
+      background: transparent;
+      border-color: color-mix(in srgb, var(--border) 65%, transparent);
+      color: color-mix(in srgb, var(--muted) 75%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 30%, transparent);
+      cursor: default;
+      opacity: 0.65;
     }
 
     .timeline-block--current {
@@ -481,12 +494,12 @@
       }
 
       .timeline-grid__blocks {
-        grid-auto-columns: minmax(48px, 1fr);
+        grid-auto-columns: minmax(56px, 56px);
         gap: 0.3rem;
       }
 
       .timeline-block {
-        height: 60px;
+        height: 66px;
       }
 
       .timeline-grid__legend {
@@ -535,10 +548,10 @@
     </section>
 
     <section class='panel'>
-      <h2 class='section-title'>Experience Timeline (2020 - Now)</h2>
-      <div class='timeline-grid' aria-label='Experience block timeline grouped by year from January 2020 through the next calendar year'>
+      <h2 class='section-title'>Experience Timeline (2023 - Now)</h2>
+      <div class='timeline-grid' aria-label='Experience block timeline grouped by year from January 2023 through the next calendar year'>
         <div class='timeline-grid__header'>
-          <span>Jan 2020</span>
+          <span>Jan 2023</span>
           <span id='timeline-grid-now-label'>Now</span>
         </div>
         <div class='timeline-grid__track'>
@@ -601,9 +614,9 @@
           subtitle: 'Southwest High School',
           description: 'Completed a high school diploma and graduated in 2024.',
           tags: ['Education'],
-          start: '2020-08-01',
+          start: '2023-01-01',
           end: '2024-06-15',
-          rangeLabel: '2020 - 2024',
+          rangeLabel: '01/23 - 06/24',
           type: 'education'
         },
         {
@@ -641,13 +654,10 @@
         }
       ];
 
-      const timelineStart = new Date('2020-01-01T00:00:00');
-      const getTimelineEnd = () => {
-        const now = new Date();
-        return new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      };
-      const timelineEnd = getTimelineEnd();
+      const timelineStart = new Date('2023-01-01T00:00:00');
       const now = new Date();
+      const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const currentYearEnd = new Date(now.getFullYear() + 1, 0, 1);
 
       if (nowLabel) {
         nowLabel.textContent = `Now · ${now.getFullYear()}`;
@@ -659,15 +669,13 @@
 
       const months = [];
       const cursor = new Date(timelineStart);
-      while (cursor < timelineEnd) {
+      while (cursor < currentYearEnd) {
         months.push(new Date(cursor));
         cursor.setMonth(cursor.getMonth() + 1);
       }
 
       const formatMonthLabel = (date) =>
         date.toLocaleString('en-US', { month: 'short', year: '2-digit' });
-
-      const monthStartForNow = new Date(now.getFullYear(), now.getMonth(), 1);
 
       const findEntryForMonth = (monthDate) => {
         const monthStart = new Date(monthDate);
@@ -676,7 +684,7 @@
         return (
           sortedEntries.find((entry) => {
             const entryStart = new Date(entry.start);
-            const entryEnd = entry.end ? new Date(entry.end) : timelineEnd;
+            const entryEnd = entry.end ? new Date(entry.end) : currentYearEnd;
             return entryStart < monthEnd && entryEnd >= monthStart;
           }) || null
         );
@@ -752,21 +760,28 @@
           block.classList.add('timeline-block');
           block.dataset.monthLabel = monthLabel;
 
-          const entry = findEntryForMonth(month);
+          const isFutureMonth = month.getFullYear() === now.getFullYear() && month > currentMonthStart;
+          const entry = isFutureMonth ? null : findEntryForMonth(month);
           if (entry) {
             block.classList.add(`timeline-block--${entry.type}`);
             block.setAttribute('aria-label', `${monthLabel}, ${entry.title} at ${entry.subtitle}`);
+          } else if (isFutureMonth) {
+            block.classList.add('timeline-block--future');
+            block.setAttribute('aria-label', `${monthLabel}, future month`);
+            block.disabled = true;
           } else {
             block.classList.add('timeline-block--idle');
             block.setAttribute('aria-label', `${monthLabel}, no experience listed`);
           }
 
-          if (month.getTime() === monthStartForNow.getTime()) {
+          if (month.getTime() === currentMonthStart.getTime()) {
             block.classList.add('timeline-block--current');
             activateBlock(block);
           }
 
-          block.addEventListener('click', () => openModal(entry, monthLabel, block));
+          if (!block.disabled) {
+            block.addEventListener('click', () => openModal(entry, monthLabel, block));
+          }
           blocks.appendChild(block);
         });
 

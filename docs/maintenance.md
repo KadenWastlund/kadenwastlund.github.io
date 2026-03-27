@@ -13,11 +13,12 @@ Last updated: 2026-03-27
 
 - Prefer role-based experience language from LinkedIn experience sections.
 - Keep dates explicit in `mm/yy` format when month precision is used (e.g., "08/25 - Present").
+- Keep Fishbowl internship timing anchored to August 2024 through May 2025; do not shift it to July unless the source snapshot changes.
 - Treat connection counts and similar metrics as snapshots.
 
 ## UI behavior notes
 
 - Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).
-- The timeline area now renders as yearly rows of monthly blocks from January 2020 through the start of the next calendar year; each row wraps at January, each block is color-coded by the active experience category, and the current (Now) month remains highlighted.
+- The timeline area now renders as yearly rows of fixed-size monthly blocks from January 2023 through December of the current calendar year; each row wraps at January, future months in the current year stay visible as empty placeholders, each active block is color-coded by experience category, and the current (Now) month remains highlighted.
 - Each year row stays horizontally scrollable on narrow viewports, swaps to tighter heights, and keeps the legend/labels in place while preserving the glassy background treatment.
 - Clicking any block opens the detail modal, which still shows the original description and tags and remains centered at every breakpoint instead of flipping to a fullscreen takeover.
