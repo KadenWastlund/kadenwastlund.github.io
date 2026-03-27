@@ -20,7 +20,7 @@ This document defines what claims on the portfolio are currently supported by so
 - Current role: Mobile Application Developer (Full-time)
 - Current role dates: Aug 2025 - Present
 - Current role work model: On-site (United States)
-- Previous role: Engineering Intern at Fishbowl
+- Previous role: Engineering Intern at Fishbowl (Fishbowl Inventories)
 - Previous role dates: Aug 2024 - May 2025
 - Previous role location/work model: Orem, Utah, United States (Remote)
 - Education: Dixie Technical College, Mobile App Development, Feb 2023 - Jun 2024
@@ -28,6 +28,11 @@ This document defines what claims on the portfolio are currently supported by so
 - Top skills listed: Swift (Programming Language), iOS Development
 - Additional listed skills: Xcode, Git
 - Network snapshot: 25 connections
+- Timeline events rendered on site (2024 -> Now):
+  - Graduated High School
+  - Graduated college (Dixie Technical College)
+  - Started employment at Fishbowl Inventories
+  - Started employment at ExpiTrans Inc
 
 ## Experience framing constraints
 

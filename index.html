@@ -152,8 +152,8 @@
     }
 
     .project-copy,
-    .timeline-item p,
-    .notes li {
+    .notes li,
+    .event-card p {
       color: var(--muted);
       font-size: 0.95rem;
     }
@@ -180,21 +180,109 @@
       color: #8d3f22;
     }
 
-    .timeline {
+    .timeline-track {
+      position: relative;
+      padding: 3.6rem 0.2rem;
+    }
+
+    .timeline-track::before {
+      content: "";
+      position: absolute;
+      left: 1.4rem;
+      right: 1.4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15, 109, 125, 0.95), rgba(219, 90, 47, 0.9));
+    }
+
+    .timeline-axis {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .timeline-axis.start {
+      left: 0;
+    }
+
+    .timeline-axis.end {
+      right: 0;
+    }
+
+    .timeline-events {
+      position: relative;
+      z-index: 1;
+      list-style: none;
       display: grid;
-      gap: 0.9rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
     }
 
-    .timeline-item {
-      padding: 0.85rem;
-      border-left: 3px solid var(--accent);
-      background: rgba(255, 255, 255, 0.68);
-      border-radius: 0.55rem;
+    .event {
+      position: relative;
+      min-height: 250px;
+      display: flex;
+      justify-content: center;
     }
 
-    .timeline-item h3 {
-      font-size: 1rem;
-      margin-bottom: 0.3rem;
+    .event-marker {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      border: 2px solid #ffffff;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 109, 125, 0.2);
+    }
+
+    .event-branch {
+      position: absolute;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: rgba(15, 109, 125, 0.6);
+    }
+
+    .event.top .event-branch {
+      top: calc(50% - 62px);
+      height: 62px;
+    }
+
+    .event.bottom .event-branch {
+      top: 50%;
+      height: 62px;
+    }
+
+    .event-card {
+      width: min(220px, 100%);
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 8px 16px rgba(13, 15, 20, 0.07);
+    }
+
+    .event-card h3 {
+      font-size: 0.92rem;
+      margin-bottom: 0.32rem;
+    }
+
+    .event.top .event-card {
+      align-self: flex-start;
+      margin-bottom: 3.8rem;
+    }
+
+    .event.bottom .event-card {
+      align-self: flex-end;
+      margin-top: 3.8rem;
     }
 
     .cta {
@@ -257,6 +345,72 @@
       .hero,
       .panel {
         border-radius: 16px;
+      }
+
+      .timeline-track {
+        padding: 1rem 0 1rem 2.8rem;
+      }
+
+      .timeline-track::before {
+        left: 1.2rem;
+        right: auto;
+        top: 1rem;
+        bottom: 1rem;
+        width: 4px;
+        height: auto;
+        transform: none;
+        background: linear-gradient(180deg, rgba(15, 109, 125, 0.95), rgba(219, 90, 47, 0.9));
+      }
+
+      .timeline-axis {
+        transform: none;
+        left: 0;
+      }
+
+      .timeline-axis.start {
+        top: -0.2rem;
+      }
+
+      .timeline-axis.end {
+        top: auto;
+        bottom: -0.2rem;
+        right: auto;
+      }
+
+      .timeline-events {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+
+      .event {
+        min-height: auto;
+        justify-content: flex-start;
+      }
+
+      .event-marker {
+        left: -1.6rem;
+        top: 50%;
+      }
+
+      .event-branch {
+        left: -1.6rem;
+        top: 50%;
+        height: 2px;
+        width: 26px;
+        transform: translateY(-50%);
+      }
+
+      .event.top .event-branch,
+      .event.bottom .event-branch {
+        top: 50%;
+        height: 2px;
+      }
+
+      .event.top .event-card,
+      .event.bottom .event-card {
+        align-self: auto;
+        margin: 0;
+        width: 100%;
       }
     }
   </style>
@@ -335,24 +489,44 @@
     </section>
 
     <section class="panel">
-      <h2 class="section-title">Timeline Snapshot</h2>
-      <div class="timeline">
-        <article class="timeline-item">
-          <h3>2020 - 2024</h3>
-          <p>Completed High School Diploma at Southwest High School.</p>
-        </article>
-        <article class="timeline-item">
-          <h3>Feb 2023 - Jun 2024</h3>
-          <p>Studied Mobile App Development at Dixie Technical College.</p>
-        </article>
-        <article class="timeline-item">
-          <h3>Aug 2024 - May 2025</h3>
-          <p>Engineering Internship at Fishbowl (Remote, Orem, Utah).</p>
-        </article>
-        <article class="timeline-item">
-          <h3>Aug 2025 - Present</h3>
-          <p>Mobile Application Developer at ExpiTrans, Inc (On-site, United States).</p>
-        </article>
+      <h2 class="section-title">Timeline (2024 - Now)</h2>
+      <div class="timeline-track">
+        <span class="timeline-axis start">2024</span>
+        <span class="timeline-axis end">Now</span>
+        <ul class="timeline-events">
+          <li class="event top">
+            <span class="event-marker"></span>
+            <span class="event-branch"></span>
+            <article class="event-card">
+              <h3>Graduated High School</h3>
+              <p>Southwest High School, 2024</p>
+            </article>
+          </li>
+          <li class="event bottom">
+            <span class="event-marker"></span>
+            <span class="event-branch"></span>
+            <article class="event-card">
+              <h3>Graduated College</h3>
+              <p>Dixie Technical College, Mobile App Development (June 2024)</p>
+            </article>
+          </li>
+          <li class="event top">
+            <span class="event-marker"></span>
+            <span class="event-branch"></span>
+            <article class="event-card">
+              <h3>Started Employment at Fishbowl Inventories</h3>
+              <p>Engineering Intern role began in August 2024</p>
+            </article>
+          </li>
+          <li class="event bottom">
+            <span class="event-marker"></span>
+            <span class="event-branch"></span>
+            <article class="event-card">
+              <h3>Started Employment at ExpiTrans Inc</h3>
+              <p>Mobile Application Developer role began in August 2025</p>
+            </article>
+          </li>
+        </ul>
       </div>
     </section>
 
