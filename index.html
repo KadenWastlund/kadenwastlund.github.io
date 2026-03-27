@@ -21,6 +21,20 @@
       --shadow: 0 16px 36px rgba(13, 15, 20, 0.12);
     }
 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #11151b;
+        --surface: rgba(21, 27, 36, 0.82);
+        --surface-strong: #1c2330;
+        --ink: #e8ecf2;
+        --muted: #b4becd;
+        --accent: #4fc0d5;
+        --accent-alt: #ff8a5f;
+        --border: rgba(222, 229, 241, 0.16);
+        --shadow: 0 18px 42px rgba(5, 7, 10, 0.42);
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -30,6 +44,7 @@
     body {
       font-family: "Space Grotesk", sans-serif;
       color: var(--ink);
+      color-scheme: light dark;
       background:
         radial-gradient(circle at 10% 10%, rgba(219, 90, 47, 0.22), transparent 30%),
         radial-gradient(circle at 80% 20%, rgba(15, 109, 125, 0.2), transparent 35%),
@@ -169,15 +184,15 @@
       font-size: 0.73rem;
       border-radius: 0.55rem;
       padding: 0.22rem 0.45rem;
-      background: #e8f4f6;
-      border: 1px solid rgba(15, 109, 125, 0.22);
-      color: #145867;
+      background: color-mix(in srgb, var(--accent) 15%, var(--surface-strong));
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      color: color-mix(in srgb, var(--accent) 65%, var(--ink));
     }
 
     .tag.alt {
-      background: #fbece7;
-      border-color: rgba(219, 90, 47, 0.24);
-      color: #8d3f22;
+      background: color-mix(in srgb, var(--accent-alt) 16%, var(--surface-strong));
+      border-color: color-mix(in srgb, var(--accent-alt) 36%, transparent);
+      color: color-mix(in srgb, var(--accent-alt) 66%, var(--ink));
     }
 
     .timeline-track {
@@ -238,7 +253,7 @@
       height: 14px;
       border-radius: 999px;
       transform: translate(-50%, -50%);
-      border: 2px solid #ffffff;
+      border: 2px solid var(--surface-strong);
       background: var(--accent);
       box-shadow: 0 0 0 3px rgba(15, 109, 125, 0.2);
     }
@@ -308,7 +323,7 @@
 
     .button.primary {
       background: var(--accent);
-      color: #ffffff;
+      color: color-mix(in srgb, #ffffff 95%, var(--ink));
       border-color: transparent;
     }
 
@@ -436,11 +451,11 @@
     </section>
 
     <section class="panel">
-      <h2 class="section-title">Focus Areas</h2>
+      <h2 class="section-title">Expertiese</h2>
       <ul class="notes">
-        <li>iOS development with Swift, Xcode, and mobile-first UX decisions.</li>
-        <li>Application architecture patterns, including MVC in real project work.</li>
-        <li>Practical mobile engineering across internship and full-time teams.</li>
+        <li>iOS development using Swift and Xcode for production-focused mobile apps.</li>
+        <li>Mobile application architecture with practical MVC implementation experience.</li>
+        <li>Team-based delivery across internship and full-time mobile engineering roles.</li>
       </ul>
     </section>
 
@@ -455,7 +470,7 @@
           <p class="project-copy">ExpiTrans, Inc (Full-time, On-site, United States). Current role focused on production mobile app development and iOS design execution.</p>
           <div class="tags">
             <span class="tag">ExpiTrans, Inc</span>
-            <span class="tag alt">iOS</span>
+            <span class="tag">iOS</span>
           </div>
           <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
         </article>
@@ -468,7 +483,7 @@
           <p class="project-copy">Fishbowl (Internship, Remote). Contributed during a 10-month internship with experience including MVC and iOS development skills.</p>
           <div class="tags">
             <span class="tag">Fishbowl</span>
-            <span class="tag alt">Remote</span>
+            <span class="tag">iOS</span>
           </div>
           <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View role source</a>
         </article>
@@ -480,8 +495,9 @@
           </div>
           <p class="project-copy">Mobile App Development program covering applied mobile fundamentals, API usage, and hands-on app implementation.</p>
           <div class="tags">
-            <span class="tag">Education</span>
-            <span class="tag alt">Mobile App Development</span>
+            <span class="tag">Dixie Technical College</span>
+            <span class="tag">iOS</span>
+            <span class="tag">Kotlin</span>
           </div>
           <a class="button" href="https://www.linkedin.com/in/kadenwastlund" target="_blank" rel="noreferrer">View education source</a>
         </article>

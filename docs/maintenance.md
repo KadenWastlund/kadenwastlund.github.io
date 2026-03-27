@@ -14,3 +14,7 @@ Last updated: 2026-03-27
 - Prefer role-based experience language from LinkedIn experience sections.
 - Keep dates explicit (e.g., "Aug 2025 - Present").
 - Treat connection counts and similar metrics as snapshots.
+
+## UI behavior notes
+
+- Theme colors in `index.html` follow the browser or OS preference via `prefers-color-scheme` (light/dark).

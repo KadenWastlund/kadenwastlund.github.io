@@ -40,6 +40,8 @@ The portfolio may describe:
 - iOS and mobile application development experience
 - Internship and full-time progression in mobile roles
 - Education pathway in mobile app development
+- Professional Experience tags that keep `iOS` visible across entries for consistency
+- Education-focused technology tags such as `Kotlin` on the Dixie Technical College entry
 
 The portfolio should NOT claim:
 - Employers/roles/dates not present in the LinkedIn snapshot
