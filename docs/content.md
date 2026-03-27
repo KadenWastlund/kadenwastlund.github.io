@@ -27,7 +27,7 @@ This document defines what claims on the portfolio are currently supported by so
 - Education: Southwest High School, High School Diploma, 2020 - 2024
 - Top skills listed: Swift (Programming Language), iOS Development
 - Additional listed skills: Xcode, Git
-- Timeline entries rendered on site (January 2023 -> current year span) as fixed-size color-coded monthly blocks grouped into year rows that show only the month label on the tile and reveal details in the modal:
+- Timeline entries rendered on site (January 2023 through December of the current year) as fixed-size color-coded monthly blocks grouped into year rows that show only the month label on the tile and reveal details in the modal:
   - High School Diploma (Southwest High School)
   - Mobile App Development Program (Dixie Technical College)
   - Engineering Intern (Fishbowl Inventories), starting in August 2024 and ending in May 2025
