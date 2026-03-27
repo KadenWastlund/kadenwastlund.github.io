@@ -13,7 +13,6 @@ This document defines what claims on the portfolio are currently supported by so
 ## Supported claims
 
 - Name: Kaden Wastlund
-- Pronouns: He/Him
 - Headline: Mobile Application Developer
 - Location: St George, Utah, United States
 - Current company: ExpiTrans, Inc
