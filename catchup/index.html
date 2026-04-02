@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catchup</title>
+  <meta name="description" content="Live telemetry capture page for catchup sessions." />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: rgba(12, 20, 34, 0.88);
+      --panel-strong: #111b2d;
+      --ink: #e5eefc;
+      --muted: #98a7c0;
+      --accent: #63c5da;
+      --border: rgba(150, 178, 214, 0.18);
+      --shadow: 0 20px 48px rgba(2, 8, 20, 0.36);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(99, 197, 218, 0.2), transparent 34%),
+        radial-gradient(circle at 15% 80%, rgba(76, 124, 255, 0.16), transparent 28%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(760px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero,
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--panel), rgba(10, 16, 28, 0.9));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      padding: 1.5rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.6rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1;
+    }
+
+    .lede {
+      margin: 0.9rem 0 0;
+      max-width: 60ch;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .panel {
+      padding: 1rem 1.1rem;
+    }
+
+    .status {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .substatus {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    pre {
+      margin: 0.9rem 0 0;
+      padding: 1rem;
+      border-radius: 16px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      overflow: auto;
+      color: #d8e4f7;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .meta {
+      display: grid;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.34rem 0.65rem;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Catchup</p>
+      <h1>Live telemetry</h1>
+      <p class="lede">
+        This page reads a `code` query parameter, watches the browser location stream, and writes the latest reading to Firestore.
+      </p>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <p class="status" id="status">Waiting for a `code` query parameter...</p>
+      <p class="substatus" id="details">Open this page with `?code=CODE-HERE`.</p>
+      <div class="meta">
+        <div class="chip-row" id="meta-chips"></div>
+        <pre id="telemetry">No telemetry yet.</pre>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      serverTimestamp,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDKW2_pEyzm2HCek7kqOAHVle8yd5mnvp8",
+      authDomain: "catchup-84e4c.firebaseapp.com",
+      projectId: "catchup-84e4c",
+      storageBucket: "catchup-84e4c.firebasestorage.app",
+      messagingSenderId: "980602109655",
+      appId: "1:980602109655:web:14754b72eb747c5749ba92"
+    };
+
+    const statusEl = document.getElementById("status");
+    const detailsEl = document.getElementById("details");
+    const telemetryEl = document.getElementById("telemetry");
+    const metaChipsEl = document.getElementById("meta-chips");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    const renderTelemetry = (payload) => {
+      telemetryEl.textContent = JSON.stringify(payload, null, 2);
+    };
+
+    const setMetaChips = (items) => {
+      metaChipsEl.innerHTML = items.map((item) => `<span class="chip">${item}</span>`).join("");
+    };
+
+    const setStatus = (message, detail) => {
+      statusEl.textContent = message;
+      detailsEl.textContent = detail;
+    };
+
+    if (!code) {
+      setStatus("Missing `code` query parameter.", "Open the page as `/catchup?code=CODE-HERE`.");
+      setMetaChips(["No code"]);
+      renderTelemetry({ error: "Missing code query parameter" });
+      throw new Error("Missing code query parameter");
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const telemetryRef = doc(db, "catchupTelemetry", code);
+
+    setMetaChips([`Code: ${code}`, "Firestore: catchupTelemetry/{code}", "Mode: live tracking"]);
+    setStatus("Requesting location permission...", "Grant access so the page can keep updating the latest latitude, longitude, speed, and heading.");
+
+    const writeTelemetry = async (coords) => {
+      const now = Timestamp.now();
+      const payload = {
+        currentLatitude: coords.latitude,
+        currentLongitude: coords.longitude,
+        currentSpeedMPS: coords.speed ?? 0,
+        kind: "telemetry",
+        observedAt: now,
+        sentAt: serverTimestamp(),
+        userID: code
+      };
+
+      await setDoc(telemetryRef, payload, { merge: true });
+      renderTelemetry(payload);
+      setStatus("Telemetry updated.", "Firestore now holds the latest reading for this code.");
+    };
+
+    if (!navigator.geolocation) {
+      setStatus("Geolocation is not supported in this browser.", "Use a browser with location permissions and HTTPS support.");
+      renderTelemetry({ error: "Geolocation unavailable" });
+      throw new Error("Geolocation unavailable");
+    }
+
+    navigator.geolocation.watchPosition(
+      (position) => {
+        writeTelemetry(position.coords).catch((error) => {
+          setStatus("Firestore write failed.", error.message);
+        renderTelemetry({
+          error: "Firestore write failed",
+          message: error.message
+        });
+      });
+    },
+      (error) => {
+        setStatus("Location error.", error.message);
+        renderTelemetry({
+          error: "Location error",
+          message: error.message,
+          code
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 15000
+      }
+    );
+  </script>
+</body>
+</html>
