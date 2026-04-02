@@ -27,5 +27,5 @@ Last updated: 2026-03-27
 ## Catchup page notes
 
 - The `/catchup` page is a static route at `catchup/index.html`.
-- It now renders a minimal status page that shows `Working` by default.
-- If an `error` query parameter is present, the page switches to an `Error` state and displays that message.
+- The page keeps the telemetry and Firestore write behavior, but the visible UI is intentionally minimal.
+- It shows `Working` by default and switches to `Error` for missing code or runtime failures.
