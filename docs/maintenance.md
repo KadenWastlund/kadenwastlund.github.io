@@ -27,5 +27,4 @@ Last updated: 2026-03-27
 ## Catchup page notes
 
 - The `/catchup` page is a static route at `catchup/index.html`.
-- It expects a `code` query parameter and writes live geolocation telemetry to Firestore.
-- The page stores the latest reading in `catchupTelemetry/{code}` with `currentLatitude`, `currentLongitude`, `currentSpeedMPS`, `kind`, `observedAt`, `sentAt`, and `userID`.
+- It now renders only a short status message and does not expose the earlier telemetry UI.
