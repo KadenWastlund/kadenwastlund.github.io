@@ -158,12 +158,12 @@
       movementThresholdMeters: getMovementThresholdMeters()
     };
 
-    setStatus("Working", `Code: ${code} · ${isTargeted() ? "targeted" : "idle"} · heartbeat ${Math.round(state.heartbeatIntervalMs / 60000)} min · move threshold ${state.movementThresholdMeters} m`);
+    setStatus("Working", ``);
 
     const writeDocument = async (payload, label) => {
       await setDoc(telemetryRef, payload, { merge: true });
       state.lastWriteAt = Date.now();
-      setStatus("Working", `${label} · code: ${code}`);
+      setStatus("Working", ``);
     };
 
     const maybeWrite = async (point) => {
@@ -171,7 +171,7 @@
 
       if (!state.lastPoint) {
         state.lastPoint = point;
-        await writeDocument(buildFullTelemetryPayload(point), "Initial telemetry sent");
+        await writeDocument(buildFullTelemetryPayload(point), "");
         return;
       }
 
