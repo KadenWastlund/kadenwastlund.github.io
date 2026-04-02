@@ -3,4 +3,4 @@
 ## Routes
 
 - `/` serves the portfolio homepage.
-- `/catchup?code=CODE-HERE` serves a minimal status page.
+- `/catchup` serves a minimal status page that shows `Working`, or `Error` when an `error` query parameter is provided.
