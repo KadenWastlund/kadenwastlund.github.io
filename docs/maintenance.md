@@ -27,5 +27,10 @@ Last updated: 2026-03-27
 ## Catchup page notes
 
 - The `/catchup` page is a static route at `catchup/index.html`.
-- The page keeps the telemetry and Firestore write behavior, but the visible UI is intentionally minimal.
-- It shows `Working` by default and switches to `Error` for missing code or runtime failures.
+- The page expects a `code` query parameter and writes live geolocation telemetry to Firestore.
+- The page treats the session as tracked when the Firestore document's `observedAt` value is within the last minute.
+- When tracked, the page writes a full telemetry update after movement greater than 10 meters or a speed change of at least 1 m/s, including transitions to or from 0 m/s.
+- When not tracked, the page writes a full telemetry update after movement greater than 50 meters or a speed change of at least 10 m/s, including transitions to or from 0 m/s.
+- When movement and speed stay below the threshold, the page sends heartbeat updates every 3 minutes while tracked and every 30 minutes while idle.
+- Full telemetry updates write `currentLatitude`, `currentLongitude`, `currentSpeedMPS`, `currentHeadingDegrees`, `kind`, `sentAt`, and `userID` into `catchupTelemetry/{code}`.
+- Heartbeats write `kind`, `sentAt`, and `userID` into the same document.

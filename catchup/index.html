@@ -59,7 +59,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDKW2_pEyzm2HCek7kqOAHVle8yd5mnvp8",
@@ -82,33 +82,20 @@
       detailsEl.style.color = isError ? "#ffb4b4" : "";
     };
 
-    const parseBoolean = (value) => {
-      if (value == null) {
-        return false;
-      }
-
-      return ["1", "true", "yes", "on", "targeted"].includes(String(value).toLowerCase());
-    };
-
-    const isTargeted = () =>
-      parseBoolean(params.get("targeted")) ||
-      parseBoolean(params.get("friend")) ||
-      parseBoolean(params.get("mode")) ||
-      parseBoolean(params.get("state")) ||
-      parseBoolean(params.get("tracking"));
-
-    const getHeartbeatIntervalMs = () => (isTargeted() ? 3 * 60 * 1000 : 30 * 60 * 1000);
-    const getMovementThresholdMeters = () => (isTargeted() ? 10 : 50);
-
-    const toTimestamp = (value) => Timestamp.fromDate(new Date(value));
+    const MAX_TRACKED_AGE_MS = 60 * 1000;
+    const TARGETED_MOVEMENT_THRESHOLD_METERS = 10;
+    const IDLE_MOVEMENT_THRESHOLD_METERS = 50;
+    const TARGETED_SPEED_THRESHOLD_MPS = 1;
+    const IDLE_SPEED_THRESHOLD_MPS = 10;
+    const TARGETED_HEARTBEAT_INTERVAL_MS = 3 * 60 * 1000;
+    const IDLE_HEARTBEAT_INTERVAL_MS = 30 * 60 * 1000;
 
     const getPoint = (coords) => ({
       latitude: coords.latitude,
       longitude: coords.longitude,
       speed: coords.speed ?? 0,
       heading: coords.heading ?? null,
-      accuracy: coords.accuracy ?? null,
-      observedAt: new Date()
+      accuracy: coords.accuracy ?? null
     });
 
     const haversineMeters = (a, b) => {
@@ -123,7 +110,20 @@
       return 6371000 * 2 * Math.atan2(Math.sqrt(arc), Math.sqrt(1 - arc));
     };
 
-    const shouldWriteHeartbeat = (state, now) => now - state.lastWriteAt >= state.heartbeatIntervalMs;
+    const isTrackedFromDocument = (snapshot) => {
+      const observedAt = snapshot?.data()?.observedAt;
+      if (!observedAt?.toDate) {
+        return false;
+      }
+
+      return Date.now() - observedAt.toDate().getTime() <= MAX_TRACKED_AGE_MS;
+    };
+
+    const getThresholds = (tracked) => ({
+      movementThresholdMeters: tracked ? TARGETED_MOVEMENT_THRESHOLD_METERS : IDLE_MOVEMENT_THRESHOLD_METERS,
+      speedThresholdMps: tracked ? TARGETED_SPEED_THRESHOLD_MPS : IDLE_SPEED_THRESHOLD_MPS,
+      heartbeatIntervalMs: tracked ? TARGETED_HEARTBEAT_INTERVAL_MS : IDLE_HEARTBEAT_INTERVAL_MS
+    });
 
     const buildFullTelemetryPayload = (point) => ({
       currentLatitude: point.latitude,
@@ -131,14 +131,12 @@
       currentSpeedMPS: point.speed,
       currentHeadingDegrees: point.heading,
       kind: "telemetry",
-      observedAt: toTimestamp(point.observedAt),
       sentAt: serverTimestamp(),
       userID: code
     });
 
-    const buildHeartbeatPayload = (point) => ({
+    const buildHeartbeatPayload = () => ({
       kind: "heartbeat",
-      observedAt: toTimestamp(point.observedAt),
       sentAt: serverTimestamp(),
       userID: code
     });
@@ -153,12 +151,22 @@
     const telemetryRef = doc(db, "catchupTelemetry", code);
     const state = {
       lastPoint: null,
+      tracked: false,
       lastWriteAt: 0,
-      heartbeatIntervalMs: getHeartbeatIntervalMs(),
-      movementThresholdMeters: getMovementThresholdMeters()
+      heartbeatIntervalMs: IDLE_HEARTBEAT_INTERVAL_MS,
+      movementThresholdMeters: IDLE_MOVEMENT_THRESHOLD_METERS,
+      speedThresholdMps: IDLE_SPEED_THRESHOLD_MPS
     };
 
     setStatus("Working", ``);
+
+    onSnapshot(telemetryRef, (snapshot) => {
+      state.tracked = isTrackedFromDocument(snapshot);
+      const thresholds = getThresholds(state.tracked);
+      state.heartbeatIntervalMs = thresholds.heartbeatIntervalMs;
+      state.movementThresholdMeters = thresholds.movementThresholdMeters;
+      state.speedThresholdMps = thresholds.speedThresholdMps;
+    });
 
     const writeDocument = async (payload, label) => {
       await setDoc(telemetryRef, payload, { merge: true });
@@ -176,8 +184,12 @@
       }
 
       const movement = haversineMeters(state.lastPoint, point);
-      const shouldSendTelemetry = movement >= state.movementThresholdMeters;
-      const shouldSendHeartbeat = shouldWriteHeartbeat(state, now);
+      const speedChangedEnough =
+        point.speed === 0 ||
+        state.lastPoint.speed === 0 ||
+        Math.abs(point.speed - state.lastPoint.speed) >= state.speedThresholdMps;
+      const shouldSendTelemetry = movement >= state.movementThresholdMeters || speedChangedEnough;
+      const shouldSendHeartbeat = now - state.lastWriteAt >= state.heartbeatIntervalMs;
 
       if (shouldSendTelemetry) {
         state.lastPoint = point;
@@ -186,7 +198,7 @@
       }
 
       if (shouldSendHeartbeat) {
-        await writeDocument(buildHeartbeatPayload(point), "Heartbeat sent");
+        await writeDocument(buildHeartbeatPayload(), "Heartbeat sent");
       }
     };
 
