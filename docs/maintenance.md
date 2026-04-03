@@ -32,5 +32,7 @@ Last updated: 2026-03-27
 - When tracked, the page writes a full telemetry update after movement greater than 10 meters or a speed change of at least 1 m/s, including transitions to or from 0 m/s.
 - When not tracked, the page writes a full telemetry update after movement greater than 50 meters or a speed change of at least 10 m/s, including transitions to or from 0 m/s.
 - When movement and speed stay below the threshold, the page sends heartbeat updates every 3 minutes while tracked and every 30 minutes while idle.
-- Full telemetry updates write `currentLatitude`, `currentLongitude`, `currentSpeedMPS`, `currentHeadingDegrees`, `kind`, `sentAt`, and `userID` into `catchupTelemetry/{code}`.
-- Heartbeats write `kind`, `sentAt`, and `userID` into the same document.
+- Full telemetry updates write `currentLatitude`, `currentLongitude`, `currentSpeedMPS`, `currentHeadingDegrees`, `tracked`, `distance`, `kind`, `sentAt`, and `userID` into `catchupTelemetry/{code}`.
+- Heartbeats write `tracked`, `distance`, `kind`, `sentAt`, and `userID` into the same document.
+- `tracked` mirrors whether the web session is actively considered tracked from the existing `observedAt` freshness check.
+- `distance` is written as `null` on the web page unless a future target-distance source is available; this keeps older documents readable without inventing a value.

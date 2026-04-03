@@ -119,23 +119,33 @@
       return Date.now() - observedAt.toDate().getTime() <= MAX_TRACKED_AGE_MS;
     };
 
+    // Keep the web cadence tied to whether the session is actively tracked.
+    // The iOS app can refine this further with target-distance context, but the
+    // web page only knows the live position, so it keeps the tracked/idle split.
     const getThresholds = (tracked) => ({
       movementThresholdMeters: tracked ? TARGETED_MOVEMENT_THRESHOLD_METERS : IDLE_MOVEMENT_THRESHOLD_METERS,
       speedThresholdMps: tracked ? TARGETED_SPEED_THRESHOLD_MPS : IDLE_SPEED_THRESHOLD_MPS,
       heartbeatIntervalMs: tracked ? TARGETED_HEARTBEAT_INTERVAL_MS : IDLE_HEARTBEAT_INTERVAL_MS
     });
 
-    const buildFullTelemetryPayload = (point) => ({
+    const buildTelemetryMetadata = (tracked, distance = null) => ({
+      tracked,
+      distance
+    });
+
+    const buildFullTelemetryPayload = (point, tracked, distance = null) => ({
       currentLatitude: point.latitude,
       currentLongitude: point.longitude,
       currentSpeedMPS: point.speed,
       currentHeadingDegrees: point.heading,
+      ...buildTelemetryMetadata(tracked, distance),
       kind: "telemetry",
       sentAt: serverTimestamp(),
       userID: code
     });
 
-    const buildHeartbeatPayload = () => ({
+    const buildHeartbeatPayload = (tracked, distance = null) => ({
+      ...buildTelemetryMetadata(tracked, distance),
       kind: "heartbeat",
       sentAt: serverTimestamp(),
       userID: code
@@ -179,7 +189,7 @@
 
       if (!state.lastPoint) {
         state.lastPoint = point;
-        await writeDocument(buildFullTelemetryPayload(point), "");
+        await writeDocument(buildFullTelemetryPayload(point, state.tracked), "");
         return;
       }
 
@@ -193,12 +203,12 @@
 
       if (shouldSendTelemetry) {
         state.lastPoint = point;
-        await writeDocument(buildFullTelemetryPayload(point), `Telemetry sent (${movement.toFixed(1)} m)`);
+        await writeDocument(buildFullTelemetryPayload(point, state.tracked), `Telemetry sent (${movement.toFixed(1)} m)`);
         return;
       }
 
       if (shouldSendHeartbeat) {
-        await writeDocument(buildHeartbeatPayload(), "Heartbeat sent");
+        await writeDocument(buildHeartbeatPayload(state.tracked), "Heartbeat sent");
       }
     };
 
